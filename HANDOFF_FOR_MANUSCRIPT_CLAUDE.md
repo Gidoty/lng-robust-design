@@ -1,82 +1,57 @@
 # Briefing for the Claude that writes the manuscript
 
-Paste this whole file at the start of the manuscript session. Update it whenever the engine session changes something.
+Paste this whole file at the start of the manuscript session. The engine session updates it whenever something changes. Read `STATUS.md` after it.
 
-## UPDATE 2026-11-20 (read `STATUS.md` section 0 first)
+## UPDATE 2026-11-20 (engine session 3)
 
-What you may now describe, with the file as the source: benchmark validation against Jensen and Skogestad (2009) and Austbo (2015) with the caveats in STATUS 0.2, the discretisation study (N = 100), the PR-GERG
-comparison including the vapour-fraction explanation of the 42.87 % point, the volume-translation sensitivity (+0.55 to +0.58 % SEC), the NeqSim property cross-check, the feed register (seven secondary-source flow-station anchors; A1 unverified, not used),
-and the scenario method (kappa 71.0, nominal A8, S = 50 with 7 anchors and 43 synthetic). Still NOT available: any Section 3.3 to 3.8 result (nominal and robust designs, price of robustness, ranking reversal, surrogate false-feasible rate,
-sensitivity) and the Khan et al. benchmark. Do not write "validated against Khan et al." The manuscript draft's Table 4 A1 row should be removed or marked unverified. Open author decisions: D11 (nitrogen-rich anchors), nominal composition A8.
+- The engine now lives in **https://github.com/Gidoty/lng-robust-design** (public; code MIT, data CC BY 4.0). The old branch `ccr-0a266400-jmatdr` of the ScholarAI repository holds a mirror of this file, `STATUS.md`, `CLAUDE.md` and `manuscript/`.
+- All of your requests 1 to 9 and 11 are applied (STATUS section 1). The register is the primary source (Ebrunu and Akpoturi 2025, Tables 4 to 10), Field D is outside the main envelope,
+  and kappa and the nominal anchor are recomputed: **kappa = 178.7, nominal composition = A4 (Field C)**, scenario set = 6 anchors + 44 synthetic (S = 50), seed 20260101.
+  Table 4 of your draft should match `lng_robust/data/feeds.csv` (printed sums 100.01, 100.01, 100.00, 99.63, 100.76, 99.98, 99.00 for Fields A to G).
+- Phases 5 to 9 are built and tested. {{RESULTS_STATUS}}
+- Results branch: {{RESULTS_BRANCH}}. Full study run: {{FULL_RUN}}. Quote numbers only from `results/<run_id>/` (tables, `RESULTS_SUMMARY.md` with file and row for each headline number). Probe runs are timing runs; their numbers are not results.
+
+## What you may describe now, with the file as the source
+
+| Topic | Source file |
+|---|---|
+| Benchmark validation (Jensen and Skogestad 2009 PASS; Austbo 2015 dual N2 PASS; Austbo single N2 FAIL on strict reading, input-precision limited) with the caveats in STATUS section 4 | `lng_robust/runs/validation_report.md`, `validation_summary.md` |
+| Discretisation study, N = 100. UA changes -0.107 % (N = 100) and -0.025 % (N = 200) relative to N = 400; SEC at fixed MITA -0.118 % and -0.066 %. Use these CSV values, not the earlier STATUS text | `runs/mshe_convergence_smr.csv` |
+| PR against GERG-2008, the vapour-fraction explanation of the 42.87 % point, volume translation (+0.55 to +0.58 % SEC), NeqSim cross-check | `runs/gerg_check_summary.csv`, `phase3_density_point.csv`, `phase3_translation.csv`, `neqsim_crosscheck_*.csv` |
+| Feed register, kappa, nominal composition, scenario method, sensitivity envelopes | `lng_robust/data/feeds.csv`, `lng_robust/results/envelopes/` |
+| The method of every unit: active-learning sampler, grouped validation, FFR with Wilson intervals, two-stage CVaR with a checkpointed GA, hybrid second stage, price of robustness, ranking reversal, Sobol with additive log-ratio composition, sensitivity protocol | STATUS section 3 and the code |
+| Efficiency: equal results after caching (1e-9, 20 cases), solver comparison, CVaR convergence at S = 25, 50, 100 (S = 50 kept), budget | STATUS section 2, `runs/inner_solver_*.csv`, `cvar_convergence*.csv`, `budget_estimate_v2.csv` |
+| Library versions and citations | STATUS section 7 (some entries marked AUTHOR TO VERIFY) |
+
+## Things to state exactly as the engine does them
+
+1. **Second stage.** The specified test (equal or lower SEC with fewer evaluations than the old method) was **not met**. State the second-stage solver as: penalised Nelder-Mead until the first feasible point, then SLSQP in a trust box;
+   warm start from the scenario's previous solution or the surrogate's best-ranked point; 40 evaluations (64 for the dual cycle) in the outer loop; 80 with three restarts for the reported scenario evaluations.
+   SEC at z0, the one number in Eq. 8, is the lowest of three rigorous searches. Your Section 2.10 says the second stage is "screened with surrogate models and the best candidates re-optimised". In the engine the surrogate chooses the cold-start and restart points only.
+2. **Eq. 8 and its interval.** Eq. 8 is a single number at z0, so it has no bootstrap interval over scenarios. The tables give `PoR_z0` (no interval), `PoR_scenario_mean` with a bootstrap 95 % interval, the change in CVaR and the change in feasible fraction with intervals.
+   Decide which of these the text reports beside Eq. 8, and word Section 2.9 to match. The engine did not change the PoR definition.
+3. **Outer search.** Population 12, 11 generations (generation 0 is the initial population), seeded with the nominal design, UA bound = nominal UA (iso-UA) or 1.25 times it. The robust design is the best found, not a proven optimum; the best-objective history per generation is in each chain's `final.json`.
+4. **Sensitivity.** Efficiency, cooler temperature and MITA_min cases re-run the nominal NSGA-II and re-evaluate the best chance-constraint-feasible designs among the top four of the main robust archive; they do not re-run the outer search.
+   Alpha and SEC_pen cases re-select among the archive. Kappa, Field D and Field E cases evaluate the main designs on the alternative scenario sets. Your Section 2.11 says "one-at-a-time runs"; say what was run.
+5. **Sobol.** Indices are for the gradient-boosting surrogate of feasible-case SEC in a box of +/-15 % of the variable range around the nominal design, with additive log-ratio composition in the envelope range. The rigorous one-at-a-time confirmation is `TS_oat_confirmation.csv`; report agreement or disagreement as found.
+6. **Ranking reversal.** Cells are 4 x 4 quantile cells on treated N2 and C2+ (mol %); differences within 5 % (the validation acceptance band) are ties. Cells with no cycle meeting the chance constraint are shown as such.
+7. **Nominal design feasibility.** In the convergence check on the dual cycle the nominal design was feasible in 24 to 26 % of scenarios. Do not generalise this to other cycles before the full results exist.
+8. LNG N2 content (mol %, after end flash) is in T5 and T6 for every design.
 
 ## Project
 
-Manuscript: "The price of robustness in modular LNG refrigeration: risk-averse design of single mixed refrigerant and nitrogen expander cycles for variable Niger Delta associated gas". Authors: Tunji Fadoyeni, Gideon Owhonda. Target: Gas Science and Engineering (Elsevier). Goal: a paper that passes review and is published.
-
-A separate Claude session built the computational engine. You write the paper from what the engine produces.
-
-## Where the work is
-
-- Repository: https://github.com/Gidoty/scholarship_application_intelligence_system
-- Branch: `ccr-0a266400-jmatdr`, folder `lng-robust-design/` (independent of the rest of the repository)
-- Read first: `STATUS.md` (state, failures, open items), `README.md` (commands), `NOVELTY_NOTES.md`, `FEED_LEADS.md`
-- Inputs and basis: `lng_robust/data/design_basis.yaml` (every value is GIVEN, ASSUMPTION or TODO), `benchmarks.yaml`, `feeds.csv`, `kij_table.csv`
-- Result files: `lng_robust/runs/` (`gerg_check*.csv`, `mshe_convergence.csv`, `validation_report.md`, `cycle_timing.csv`, `methane_density_map.csv`) and one subfolder per pipeline run
-
-If you cannot read the repository, ask the author to paste the file you need. Do not reconstruct numbers from memory.
+Manuscript: "The price of robustness in modular LNG refrigeration: risk-averse design of single mixed refrigerant and nitrogen expander cycles for variable Niger Delta associated gas". Authors: Tunji Fadoyeni, Gideon Owhonda. Target: Gas Science and Engineering (Elsevier).
 
 ## Rules you must follow when writing
 
 1. Every number in the paper must come from a file produced by the engine. Cite the file in your working notes. If no file has the number, write `[AUTHOR TO PROVIDE]`.
-2. No result exists yet. The folder `runs/20261119T224509Z_quick_SMOKE/` is a smoke test labelled "SMOKE TEST - NOT A RESULT". Never quote, summarise or round numbers from it.
-3. Do not state or imply an outcome before the data exist: not a ranking reversal, not a price-of-robustness size, not a surrogate failure rate. The abstract template in the manuscript has blanks for these. Leave them blank.
+2. Never quote a number from a probe run or any folder labelled SMOKE. Surrogate values are not results.
+3. Do not state or imply an outcome before the data exist in a full-run results package.
 4. A null or negligible result is publishable if the method is sound. Write it plainly if that is what the data show.
 5. Label anchors (published) and synthetic scenarios separately in text, tables and figures.
-6. Do not add references you have not checked. Several draft references are marked `[AUTHOR TO VERIFY]`. Do not complete author lists, titles or DOIs from memory.
+6. Do not add references you have not checked. Do not complete author lists, titles or DOIs from memory.
 7. Follow the author's style: clear direct language, active voice, British English, no em dashes, no filler openers, no metaphors or analogies, concrete numbers when they exist.
 
-## What exists and is verified (you may describe the method, with the file as the source)
+## Items the engine could not finish
 
-- Property model: Peng-Robinson via the `thermo` library, kij from the ChemSep PR table (8 hydrocarbon pairs are zero in that databank). Compared with GERG-2008 (CoolProp) at 216 states. Mean absolute density deviation 0.87 % in gas, 9.45 % in liquid, 5.31 % overall. Plain PR over-predicts liquid density by about 12 %. SEC uses enthalpy and entropy, not liquid density. Source: `gerg_check_summary.csv`, `methane_density_map.csv`.
-- One CoolProp point returned a wrong branch without error. It is flagged `GERG_SUSPECT` and excluded from statistics, not deleted.
-- Heat exchanger: equal-duty discretised multi-stream model. On the reference N2-dual design UA changes 0.003 % from N = 100 to 200. That case pinches at the cold end, so it does not test interior pinches. Source: `mshe_convergence.csv`.
-- Cycles: SMR (PRICO type), single N2 expander, dual N2 expander (parallel expanders with a flow split; topology not yet confirmed against Khan et al. 2015). Mass, energy and exergy balances close. Exergy closure needs a composition-change term for the end-flash split.
-- Failure handling: six specified failure codes plus four added. Every evaluation is logged with its code. Source: `STATUS.md` section 5.
-- Two-stage CVaR formulation (CVaR at 0.9, chance constraint 0.95, equipment fixed, operation re-optimised per scenario), NSGA-II nominal design, price of robustness, grouped leave-one-composition-out surrogates, false-feasible rate, Sobol analysis (code tested, not run on the cycles).
-- Tests: 40 pass.
-
-## What is not done (do not write it as done)
-
-- **Benchmark validation: none.** All three benchmarks are INCOMPLETE because inputs are null. Missing fields are listed in `STATUS.md` section 9. The paper cannot claim "validated against published benchmarks" until `validation_report.md` shows PASS or reports deviations.
-- Only one real composition (A1, secondary source, sums to 98.36 %, C4/C5 isomer split assumed). Rows A2 onward are TODO.
-- No capacity-dependent efficiency, so SEC is scale-invariant and the capacity dimension of RQ2 is empty.
-- The study-scale run (`--full`) has not been run. The default budget is not feasible on the build machine (see `STATUS.md` section 7).
-- Surrogate training data are too thin (7 to 17 feasible cases of 200). No surrogate result is reportable.
-- No ranking-reversal code, no independent-simulator comparison, no sensitivity runs, no interior-pinch convergence study.
-
-## Writing plan that the current state supports
-
-| Manuscript section | What you can write now | What waits for data |
-|---|---|---|
-| 1 Introduction | Background, gap, objectives. Add Tsay, Pattison and Baldea (2018, Ind. Eng. Chem. Res.), which the draft omits: it optimised PRICO under varying feed composition with equipment sizing. State the difference only after the author checks its exact formulation | Final novelty statement needs the author's Scopus search |
-| 2.1 to 2.6 Methods | Describe the implemented models and equations. Replace each `[AUTHOR TO PROVIDE]` that the engine now answers (solver tolerances, N, table points) with the value and its source file | Capacity points, efficiency correlation, benchmark inputs |
-| 2.7 Composition envelope | Method, grading, anchor/synthetic separation | Table 4 values, kappa |
-| 2.9 to 2.11 | Formulation as implemented | Budgets, thresholds |
-| 3 Results | Nothing yet except the property comparison and discretisation study (Section 3.1 parts) | Everything else |
-| 3.9 Limitations | Expand using `STATUS.md` sections 4, 10, 11 | |
-| 4 Conclusions | Nothing | After results |
-
-## Decisions the author must confirm (ask, do not decide)
-
-Price-of-robustness definition (iso-UA budget factor 1.0 is the engine default), nominal design rule (knee of the SEC-UA front), dual-N2 topology, dual mixed refrigerant as a limitation, heavy-hydrocarbon removal method, feed T and P, cooler outlet temperature, pressure drops, bounds, SEC penalty, capacity points and flare-site mapping. The full list is `STATUS.md` section 10.
-
-## What the engine session will do next
-
-1. Fill benchmark inputs once the author supplies them, then run `validate.py` and report PASS, FAIL or deviation.
-2. Add real compositions to `feeds.csv` after the author or the engine session reads the primary sources.
-3. Replace the surrogate design of experiments with feasibility-guided sampling.
-4. Add the capacity-dependent efficiency (needs a source), capacity runs, ranking-reversal maps, sensitivity runs, an interior-pinch convergence study and an independent-simulator comparison.
-5. Choose a feasible study-scale budget, run it, and write tables and figures with provenance (config, git hash, seed).
-6. Update this file and `STATUS.md` at each step. Re-read them before you write any section.
-
-When the engine session produces results, ask the author for the run folder name and read its `config.json`, `design_summary.csv`, `evaluations.csv` and `failure_code_counts.csv` before writing a number.
+See STATUS section 8 and the INCOMPLETE section of `RESULTS_SUMMARY.md`. Documents still wanted from the authors are in `manuscript/REQUESTS_TO_ENGINE.md` (Tsay and Baldea 2018 PDF; the NeqSim, scikit-learn and CoolProp reference texts).
