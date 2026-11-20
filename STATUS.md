@@ -201,7 +201,29 @@ Pinned in `requirements.lock`; every results package records them in `provenance
 
 ## 9. Full study run, IDs and how to resume
 
-{{RUN_TABLE}}
+| Run | ID | Preset | Commit | Outcome |
+|---|---|---|---|---|
+| Probe 1 | 44671744150 | probe | b561590 | failed: boolean negation bug in the surrogate start selector (found, fixed) |
+| Probe 2 | 44673907933 | probe | 92da4a8 | failed: SMR nominal search found no feasible design at the tiny budget and downstream units crashed (fixed: seeded search, INCOMPLETE status instead of a crash) |
+| Probe 3 | 44676187131 | probe | 3394ead | **all units complete** (about 23 min). Branch `results/44676187131` (labelled probe, not results) |
+| Probe 4 | 44679258973 | probe | 8070278 | **all units complete** (about 30 min): five-stage chain, best-of-three z0 searches. Branch `results/44679258973` |
+| **Full study** | **44682889025** | **full** | **c92d3a0** | launched 2026-11-20 05:43 UTC. Expected end about 20 h later (critical path is the SMR robust chain, 4 chained jobs of up to 280 min, then `across` and `sens`) |
+
+Probe packages (`results/44671744150`, `results/44673907933`, `results/44676187131`, `results/44679258973`) carry the label PROBE TIMING RUN - NOT A RESULT in the summary and in every table (the first three
+were produced before the label existed and have only the preset name in `provenance.json`). Their numbers are not results.
+
+Results branch of the full study: **`results/44682889025`**, committed automatically by the `package` job when all units have finished (it also runs when some units failed or are incomplete, and then lists them).
+Evaluation shards: workflow artifacts `shards-*` of run 44682889025 (retention 90 days).
+
+Watch: `gh run view 44682889025` and `gh run list --workflow study.yml` (or the Actions tab). Each stage job prints one line per member and per generation.
+
+Resume commands (checkpoints are artifacts of the run, so a re-run job continues from the previous stage's checkpoint):
+- a failed or timed-out job: `gh run rerun 44682889025 --failed`. A re-run robust stage reads the checkpoint of the stage before it; nothing is recomputed.
+- a robust chain that ends `partial` (the 5 chained jobs were not enough): the package lists it under INCOMPLETE and the design reported is the best found so far. To continue it, start a new run (`gh workflow run study.yml --ref main -f preset=full -f seed=20260101`); there is no cross-run resume, so the new run starts from stage 1.
+- the package alone: `python -m lng_robust.study.package --work work --out results_package --run-id 44682889025 --preset full` after `gh run download 44682889025 -p 'unit-*' -D work`.
+- if GitHub refused the workflow file: `study.yml.txt` in the repository root is a copy to paste through the web page. (Not needed: the push of `.github/workflows/study.yml` was accepted.)
+
+Runner-minutes: {{RUNNER_MINUTES}}
 
 ## 10. Failure handling
 
