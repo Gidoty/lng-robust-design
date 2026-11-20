@@ -1,0 +1,68 @@
+{
+  "main": {
+    "kappa": 178.67253129524812,
+    "nominal": "A4",
+    "anchors": [
+      "A2",
+      "A3",
+      "A4",
+      "A6",
+      "A7",
+      "A8"
+    ],
+    "n_synthetic": 44
+  },
+  "fieldD": {
+    "kappa": 69.08363414948028,
+    "nominal": "A8",
+    "anchors": [
+      "A2",
+      "A3",
+      "A4",
+      "A5",
+      "A6",
+      "A7",
+      "A8"
+    ],
+    "n_synthetic": 43
+  },
+  "fieldE_secondary": {
+    "kappa": 175.32471322406153,
+    "nominal": "A4",
+    "anchors": [
+      "A2",
+      "A3",
+      "A4",
+      "A6S",
+      "A7",
+      "A8"
+    ],
+    "n_synthetic": 44
+  },
+  "kappa_x0.5": {
+    "kappa": 89.33626564762406,
+    "nominal": "A4",
+    "anchors": [
+      "A2",
+      "A3",
+      "A4",
+      "A6",
+      "A7",
+      "A8"
+    ],
+    "n_synthetic": 44
+  },
+  "kappa_x2": {
+    "kappa": 357.34506259049624,
+    "nominal": "A4",
+    "anchors": [
+      "A2",
+      "A3",
+      "A4",
+      "A6",
+      "A7",
+      "A8"
+    ],
+    "n_synthetic": 44
+  }
+}

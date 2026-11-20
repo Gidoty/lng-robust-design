@@ -24,17 +24,27 @@ def test_pretreat_is_identity_for_a_feed_already_in_spec():
     assert all(abs(pt.treated[k] - v) < 1e-12 for k, v in z.items())
 
 
-def test_feed_register_loads_verified_anchors_and_skips_unverified_and_todo(basis):
+def test_feed_register_is_primary_source_with_printed_isomers(basis):
     feeds, skipped = load_feeds(basis)
     assert [f.id for f in feeds] == [f"A{i}" for i in range(2, 9)]
-    assert {t["id"]: t["status"] for t in skipped} == {"A1": "unverified", "A9": "TODO"}
+    assert skipped == []                         # A1 (Soku) and A9 (Sonibare) are dropped from the register
     a2 = feeds[0]
-    assert a2.raw_mol_pct["C1"] == 91.20 and a2.raw_mol_pct["C5_total"] == 0.08 and "iC5" not in a2.raw_mol_pct
-    assert abs(a2.raw_sum - 99.99) < 1e-9 and a2.synthetic is False and a2.grade == "secondary"
+    assert a2.raw_mol_pct["C1"] == 91.21 and a2.raw_mol_pct["iC5"] == 0.03 and a2.raw_mol_pct["nC5"] == 0.02
+    assert "C5_total" not in a2.raw_mol_pct and a2.grade == "primary"
+    printed_sum = {"A2": 100.01, "A3": 100.01, "A4": 100.00, "A5": 99.63, "A6": 100.76, "A7": 99.98, "A8": 99.00}
     d = next(f for f in feeds if f.id == "A5")
     assert d.raw_mol_pct["N2"] == 42.74            # Field D, as printed
     for f in feeds:
-        assert 99.9 <= f.raw_sum <= 100.0 and "Ucheckukwu" in f.source
+        assert abs(f.raw_sum - printed_sum[f.id]) < 0.006 and "Ebrunu and Akpoturi" in f.source
+        assert abs(sum(f.treated.values()) - 1.0) < 1e-12       # renormalised for simulation
+
+
+def test_fieldE_sensitivity_row_differs_only_in_c1_and_c2(basis):
+    from lng_robust.doe.envelope import fieldE_secondary
+    e = next(f for f in load_feeds(basis)[0] if f.id == "A6")
+    s = fieldE_secondary(basis)
+    diff = {k for k in e.raw_mol_pct if e.raw_mol_pct[k] != s.raw_mol_pct[k]}
+    assert diff == {"C1", "C2"} and s.raw_mol_pct["C1"] == 84.03 and s.raw_mol_pct["C2"] == 4.14
 
 
 def test_dirichlet_samples_are_labelled_synthetic_and_in_spec(basis):

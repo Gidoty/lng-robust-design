@@ -15,7 +15,7 @@ from lng_robust.cycles.n2_dual import solve_n2_dual
 from lng_robust.cycles.pretreat import pretreat
 
 REFERENCE_FEED_RAW = {"C1": 92.51, "C2": 2.78, "C3": 1.66, "iC4": 0.39, "nC4": 0.39, "iC5": 0.15, "nC5": 0.15,
-                      "N2": 0.22, "CO2": 0.11}     # A1 (secondary source); C4/C5 split is an assumption
+                      "N2": 0.22, "CO2": 0.11}     # hand-set reference feed for the convergence study (not a register entry; A1 was dropped)
 REFERENCE_X = dict(P_high_bar=60, P_low_bar=10, flow_ratio=8, T_exp_in_warm_C=-30, T_exp_in_cold_C=-100,
                    split=0.5, T_lng_C=-150)
 N_LIST = [10, 20, 50, 100, 200]

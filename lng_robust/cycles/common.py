@@ -65,6 +65,7 @@ class CycleResult:
         d["exergy_destruction_kw"] = ";".join(f"{k}={v:.4g}" for k, v in self.exergy_destruction_kw.items())
         d["lng_comp"] = ";".join(f"{k}={v:.5f}" for k, v in self.lng_comp.items())
         d["failure_codes"] = ";".join(self.failure_codes)
+        d["lng_N2_mol_pct"] = 100.0 * self.lng_comp.get("N2", 0.0) if self.lng_comp else float("nan")
         d.pop("details")
         for k, v in self.details.items():
             if isinstance(v, (int, float, str, bool)):

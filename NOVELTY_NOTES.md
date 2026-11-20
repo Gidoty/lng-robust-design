@@ -5,8 +5,8 @@ original. Confirm every claim and reference before it goes into the manuscript.
 
 ## Closest prior work that the manuscript draft does not cite
 
-1. **Tsay, Pattison and Baldea (2018), "Scenario-Free Optimal Design under Uncertainty of the PRICO Natural Gas
-   Liquefaction Process", Industrial & Engineering Chemistry Research.** The abstract states that PRICO is optimised with
+1. **Tsay and Baldea (2018), "Scenario-Free Optimal Design under Uncertainty of the PRICO Natural Gas
+   Liquefaction Process", Ind. Eng. Chem. Res. 57(17), 5868-5880, doi 10.1021/acs.iecr.7b03634.** (Corrected 2026-11-20: the authors are Tsay and Baldea, not Tsay, Pattison and Baldea.) The abstract states that PRICO is optimised with
    varying feed composition and that equipment size is optimised together with operating conditions. This is the nearest
    neighbour to the paper's "design for feed variability with equipment fixed and operation retuned" idea for the SMR cycle.
    A reviewer who knows it will ask how this study differs. The manuscript must cite it and state the difference
@@ -28,7 +28,7 @@ original. Confirm every claim and reference before it goes into the manuscript.
 
 ## Update 2026-11-19 (engine session)
 
-Tsay, Pattison and Baldea (2018) could not be opened (paywalled). Its formulation (objective, what is fixed, how composition
+Tsay and Baldea (2018) could not be opened (paywalled; the authors will supply the PDF). Its formulation (objective, what is fixed, how composition
 varies, which cycles) is still unrecorded. Request filed in `manuscript/REQUESTS_TO_ENGINE.md`. Until it is read, do not claim a
 specific difference from it in the manuscript.
 

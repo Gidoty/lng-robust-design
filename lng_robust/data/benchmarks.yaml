@@ -1,5 +1,7 @@
 # Benchmark inputs. ONLY values stated in the task specification are filled. Every other field is null.
 # A null is never guessed or substituted; validate.py prints BENCHMARK_INPUTS_INCOMPLETE for it.
+# Khan et al. (2015) is NOT cited by the manuscript (decision 2026-11-20). The two Khan entries stay INCOMPLETE and are never used as validation.
+# The manuscript validates nitrogen cycles against Austbo (2015) only.
 # A value that the original paper states as "none / zero" must be entered as an explicit 0, with a note.
 khan2015_n2_single:
   cycle: n2_single

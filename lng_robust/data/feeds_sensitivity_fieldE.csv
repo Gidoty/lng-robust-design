@@ -1,0 +1,2 @@
+id,facility,source,grade,N2,CO2,C1,C2,C3,iC4,nC4,C4_total,iC5,nC5,C5_total,C6,sum,status,notes
+A6S,"Field E flow station (OML 34), SENSITIVITY: C1 and C2 from the secondary copy","Primary values (Ebrunu and Akpoturi 2025, Table 8) with C1 84.03 and C2 4.14 from Ucheckukwu et al. 2026, IJISRT 11(6), Table 1 (secondary). Manuscript Section 2.11 sensitivity",sensitivity,0.04,8.81,84.03,4.14,1.49,0.46,0.37,,0.13,0.26,,0.27,100.0,entered,Only C1 (84.09 -> 84.03) and C2 (4.84 -> 4.14) differ from A6. The components then sum to 100.0. Not part of the main envelope.

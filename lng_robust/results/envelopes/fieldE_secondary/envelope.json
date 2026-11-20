@@ -1,0 +1,59 @@
+{
+  "name": "fieldE_secondary",
+  "kappa": 175.32471322406153,
+  "kappa_scale": 1.0,
+  "kappa_info": {
+    "method": "median over C1,C2,C3,N2 of m(1-m)/s^2 - 1, s = 1.4826*MAD across anchors",
+    "kappa_by_component": {
+      "C1": 56.50638547192283,
+      "C2": 242.02009551538038,
+      "C3": 108.62933093274268,
+      "N2": 2984.1990974256973
+    },
+    "anchor_mean": {
+      "C1": 0.8999205134439178,
+      "C2": 0.05494355087318848,
+      "C3": 0.017675017369758166,
+      "N2": 0.019426712337752127
+    },
+    "anchor_robust_sd": {
+      "C1": 0.03957460369757142,
+      "C2": 0.014617265763757863,
+      "C3": 0.012584736811236725,
+      "N2": 0.002526114507282708
+    },
+    "n_anchors": 6
+  },
+  "nominal": {
+    "nominal": "A4",
+    "distance_to_mean": [
+      0.043620592372514325,
+      0.0626642394863117,
+      0.020066822320340922,
+      0.0345444263143787,
+      0.11685650389527806,
+      0.0980596451434771
+    ],
+    "anchor_ids": [
+      "A2",
+      "A3",
+      "A4",
+      "A6S",
+      "A7",
+      "A8"
+    ],
+    "reason": "closest (Euclidean, treated mole fractions of C1, C2, C3, N2) to the anchor mean"
+  },
+  "S": 50,
+  "seed": 20260101,
+  "n_anchor_scenarios": 6,
+  "n_synthetic_scenarios": 44,
+  "anchor_ids": [
+    "A2",
+    "A3",
+    "A4",
+    "A6S",
+    "A7",
+    "A8"
+  ]
+}
