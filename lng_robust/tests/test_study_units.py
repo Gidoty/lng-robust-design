@@ -159,7 +159,7 @@ def test_workflow_structure():
         assert j["timeout-minutes"] <= 330, name
         if "strategy" in j:
             assert j["strategy"]["max-parallel"] == 20 and j["strategy"]["fail-fast"] is False
-    assert jobs["robust2"]["needs"] == ["surrogate", "robust1"] and jobs["robust3"]["needs"] == ["surrogate", "robust2"]
+    assert jobs["robust2"]["needs"] == ["surrogate", "robust1"] and jobs["robust5"]["needs"] == ["surrogate", "robust4"] and jobs["across"]["needs"] == ["robust5"]
     assert len(jobs["robust1"]["strategy"]["matrix"]["variant"]) * len(jobs["robust1"]["strategy"]["matrix"]["cycle"]) == 9
     assert jobs["package"]["if"] and "permissions" in wf and wf["permissions"]["contents"] == "write"
     text = (Path(__file__).parents[2] / ".github" / "workflows" / "study.yml").read_text()

@@ -195,7 +195,7 @@ def unit_robust(ctx):
         (out / "ga_state.json").write_text(state.to_json())
         (out / "warm.json").write_text(json.dumps(warm))
         _log(f"generation {state.gen} done in {tg.minutes():.1f} min; best {state.history[-1]}")
-        if state.gen < target and t_unit.minutes() + 1.2 * last_gen_min[0] > P["unit_wall_min"]:
+        if state.gen < target and t_unit.minutes() + 1.1 * last_gen_min[0] > P["unit_wall_min"]:
             _log("wall-clock budget for this job reached; checkpoint written")
             break
     archive.close()

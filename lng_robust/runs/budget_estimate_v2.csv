@@ -1,0 +1,39 @@
+unit,cycle,jobs,evals_per_job,evals_total,wall_min_per_job,runner_minutes,note
+nominal,smr,1,2651,2651,10.6,10.6,
+sample,smr,1,10000,10000,32.9,32.9,
+robust chain (cvar_iso),smr,4,66000,264000,203.1,812.4,132 members x 50 scenarios x 40.0 evals; 13.4 h of compute over 4 chained jobs (5 slots provided)
+robust chain (cvar_125),smr,4,66000,264000,203.1,812.4,132 members x 50 scenarios x 40.0 evals; 13.4 h of compute over 4 chained jobs (5 slots provided)
+robust chain (worst_iso),smr,4,66000,264000,203.1,812.4,132 members x 50 scenarios x 40.0 evals; 13.4 h of compute over 4 chained jobs (5 slots provided)
+across,smr,1,15256,15256,48.9,48.9,
+reversal (nominal),smr,1,9600,9600,31.7,31.7,
+reversal (robust),smr,1,9600,9600,31.7,31.7,
+sobol + OAT,smr,1,270,270,3.3,3.3,
+sens model-parameter case,smr,6,9330,55980,30.9,185.1,
+sens set case,smr,4,8000,32000,26.8,107.3,
+sens archive case (re-selection only),smr,4,0,0,2.5,10.0,no new rigorous evaluations
+nominal,n2_single,1,2651,2651,5.1,5.1,
+sample,n2_single,1,10000,10000,12.3,12.3,
+robust chain (cvar_iso),n2_single,1,264000,264000,261.3,261.3,132 members x 50 scenarios x 40.0 evals; 4.3 h of compute over 1 chained jobs (5 slots provided)
+robust chain (cvar_125),n2_single,1,264000,264000,261.3,261.3,132 members x 50 scenarios x 40.0 evals; 4.3 h of compute over 1 chained jobs (5 slots provided)
+robust chain (worst_iso),n2_single,1,264000,264000,261.3,261.3,132 members x 50 scenarios x 40.0 evals; 4.3 h of compute over 1 chained jobs (5 slots provided)
+across,n2_single,1,15256,15256,17.5,17.5,
+reversal (nominal),n2_single,1,9600,9600,11.9,11.9,
+reversal (robust),n2_single,1,9600,9600,11.9,11.9,
+sobol + OAT,n2_single,1,270,270,2.8,2.8,
+sens model-parameter case,n2_single,6,9330,55980,11.6,69.9,
+sens set case,n2_single,4,8000,32000,10.3,41.4,
+sens archive case (re-selection only),n2_single,4,0,0,2.5,10.0,no new rigorous evaluations
+nominal,n2_dual,1,2651,2651,5.7,5.7,
+sample,n2_dual,1,10000,10000,14.8,14.8,
+robust chain (cvar_iso),n2_dual,2,211200,422400,261.3,522.6,132 members x 50 scenarios x 64.0 evals; 8.6 h of compute over 2 chained jobs (5 slots provided)
+robust chain (cvar_125),n2_dual,2,211200,422400,261.3,522.6,132 members x 50 scenarios x 64.0 evals; 8.6 h of compute over 2 chained jobs (5 slots provided)
+robust chain (worst_iso),n2_dual,2,211200,422400,261.3,522.6,132 members x 50 scenarios x 64.0 evals; 8.6 h of compute over 2 chained jobs (5 slots provided)
+across,n2_dual,1,15256,15256,21.2,21.2,
+reversal (nominal),n2_dual,1,9600,9600,14.3,14.3,
+reversal (robust),n2_dual,1,9600,9600,14.3,14.3,
+sobol + OAT,n2_dual,1,270,270,2.8,2.8,
+sens model-parameter case,n2_dual,6,9330,55980,13.9,83.6,
+sens set case,n2_dual,4,8000,32000,12.3,49.2,
+sens archive case (re-selection only),n2_dual,4,0,0,2.5,10.0,no new rigorous evaluations
+TOTAL (new plan),all,81,0,3257271,0.0,5649.1,critical path about 15.8 h when jobs run in parallel (max-parallel 20)
+OLD plan (22 h on 4 workers),all,1,416000,416000,1320.0,1320.0,"STATUS.md 0.6 (SMR 10.6 h, single N2 5.3 h, dual N2 5.9 h on 4 workers)"

@@ -383,8 +383,134 @@ jobs:
           retention-days: 90
           if-no-files-found: ignore
 
+  robust4:
+    needs: [surrogate, robust3]
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    strategy:
+      fail-fast: false
+      max-parallel: 20
+      matrix:
+        cycle: [smr, n2_single, n2_dual]
+        variant: [cvar_iso, cvar_125, worst_iso]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: requirements.lock
+      - name: Install pinned requirements
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.lock
+          pip install -e . --no-deps
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: unit-nominal-${{ matrix.cycle }}
+          path: work
+          merge-multiple: false
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: unit-surrogate-${{ matrix.cycle }}
+          path: work
+          merge-multiple: false
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: unit-robust-${{ matrix.cycle }}-${{ matrix.variant }}-s3
+          path: work
+          merge-multiple: false
+      - name: Run unit
+        run: |
+          mkdir -p work
+          python -m lng_robust.study.cli robust --cycle ${{ matrix.cycle }} --variant ${{ matrix.variant }} --stage 4 --preset "$PRESET" --seed "$SEED" --work work --workers 4
+      - name: Evaluation counts
+        if: always()
+        run: python -m lng_robust.study.counts "work/unit-robust-${{ matrix.cycle }}-${{ matrix.variant }}-s4" || true
+      - name: Upload checkpoint and results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit-robust-${{ matrix.cycle }}-${{ matrix.variant }}-s4
+          path: |
+            work/unit-robust-${{ matrix.cycle }}-${{ matrix.variant }}-s4
+            !work/unit-robust-${{ matrix.cycle }}-${{ matrix.variant }}-s4/evals-*.parquet
+          retention-days: 90
+          if-no-files-found: warn
+      - name: Upload evaluation shards
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: shards-robust-${{ matrix.cycle }}-${{ matrix.variant }}-s4
+          path: work/unit-robust-${{ matrix.cycle }}-${{ matrix.variant }}-s4/evals-*.parquet
+          retention-days: 90
+          if-no-files-found: ignore
+
+  robust5:
+    needs: [surrogate, robust4]
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    strategy:
+      fail-fast: false
+      max-parallel: 20
+      matrix:
+        cycle: [smr, n2_single, n2_dual]
+        variant: [cvar_iso, cvar_125, worst_iso]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: requirements.lock
+      - name: Install pinned requirements
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.lock
+          pip install -e . --no-deps
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: unit-nominal-${{ matrix.cycle }}
+          path: work
+          merge-multiple: false
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: unit-surrogate-${{ matrix.cycle }}
+          path: work
+          merge-multiple: false
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: unit-robust-${{ matrix.cycle }}-${{ matrix.variant }}-s4
+          path: work
+          merge-multiple: false
+      - name: Run unit
+        run: |
+          mkdir -p work
+          python -m lng_robust.study.cli robust --cycle ${{ matrix.cycle }} --variant ${{ matrix.variant }} --stage 5 --preset "$PRESET" --seed "$SEED" --work work --workers 4
+      - name: Evaluation counts
+        if: always()
+        run: python -m lng_robust.study.counts "work/unit-robust-${{ matrix.cycle }}-${{ matrix.variant }}-s5" || true
+      - name: Upload checkpoint and results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit-robust-${{ matrix.cycle }}-${{ matrix.variant }}-s5
+          path: |
+            work/unit-robust-${{ matrix.cycle }}-${{ matrix.variant }}-s5
+            !work/unit-robust-${{ matrix.cycle }}-${{ matrix.variant }}-s5/evals-*.parquet
+          retention-days: 90
+          if-no-files-found: warn
+      - name: Upload evaluation shards
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: shards-robust-${{ matrix.cycle }}-${{ matrix.variant }}-s5
+          path: work/unit-robust-${{ matrix.cycle }}-${{ matrix.variant }}-s5/evals-*.parquet
+          retention-days: 90
+          if-no-files-found: ignore
+
   across:
-    needs: [robust3]
+    needs: [robust5]
     runs-on: ubuntu-latest
     timeout-minutes: 330
     strategy:
@@ -827,7 +953,7 @@ jobs:
           if-no-files-found: ignore
 
   package:
-    needs: [nominal, sample, surrogate, robust3, across, reversal, sobol, sobol_pref, sens_model, sens_archive, sens_sets]
+    needs: [nominal, sample, surrogate, robust5, across, reversal, sobol, sobol_pref, sens_model, sens_archive, sens_sets]
     if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     timeout-minutes: 120

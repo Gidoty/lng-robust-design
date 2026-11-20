@@ -137,12 +137,12 @@ def main():
     out.append(job("surrogate", ["sample"], cyc, f"surrogate-{mc}", f"surrogate --cycle {mc}", [f"unit-sample-{mc}"]))
     cv = {"cycle": cyc["cycle"], "variant": "[" + ", ".join(VARIANTS) + "]"}
     prev = None
-    for st in (1, 2, 3):
+    for st in (1, 2, 3, 4, 5):
         dl = [f"unit-nominal-{mc}", f"unit-surrogate-{mc}"] + ([f"unit-robust-{mc}-{mv}-s{st-1}"] if st > 1 else [])
         out.append(job(f"robust{st}", ["surrogate"] + ([f"robust{st-1}"] if st > 1 else []), cv, f"robust-{mc}-{mv}-s{st}",
                        f"robust --cycle {mc} --variant {mv} --stage {st}", dl))
     rob = "unit-robust-" + mc + "-*"
-    out.append(job("across", ["robust3"], cyc, f"across-{mc}", f"across --cycle {mc}",
+    out.append(job("across", ["robust5"], cyc, f"across-{mc}", f"across --cycle {mc}",
                    [f"unit-nominal-{mc}", f"unit-surrogate-{mc}", rob]))
     rv = {"cycle": cyc["cycle"], "variant": "[nominal, robust]"}
     out.append(job("reversal", ["across"], rv, f"reversal-{mc}-{mv}", f"reversal --cycle {mc} --variant {mv}",
@@ -158,7 +158,7 @@ def main():
                    f"sens-{mc}-{mk}", f"sens --cycle {mc} --case {mk}", sens_dl))
     out.append("""
   package:
-    needs: [nominal, sample, surrogate, robust3, across, reversal, sobol, sobol_pref, sens_model, sens_archive, sens_sets]
+    needs: [nominal, sample, surrogate, robust5, across, reversal, sobol, sobol_pref, sens_model, sens_archive, sens_sets]
     if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     timeout-minutes: 120
