@@ -253,9 +253,21 @@ def build(work: Path, out: Path, run_id: str = "local", preset: str = "full", se
     if isinstance(sob, pd.DataFrame) and len(sob):
         made += F.fig9_sobol(sob, pref, out / "figures")
 
+    probe = preset != "full"
+    if probe:
+        label = "PROBE TIMING RUN - NOT A RESULT"
+        for f in T.glob("*.csv"):
+            d = pd.read_csv(f)
+            d["label"] = label
+            d.to_csv(f, index=False)
+        (out / "PROBE_NOT_A_RESULT.txt").write_text("This package comes from the probe preset. It measures time per evaluation and checks the plumbing. "
+                                                      "No number in it is a result, a finding or a benchmark. Do not quote it.\n")
     prov = provenance(work, out, run_id, preset, seed, done)
-    (out / "headline_numbers.csv").write_text(pd.DataFrame(H.rows).to_csv(index=False))
-    md = ["# RESULTS SUMMARY", "",
+    hn = pd.DataFrame(H.rows)
+    if probe:
+        hn["label"] = "PROBE TIMING RUN - NOT A RESULT"
+    (out / "headline_numbers.csv").write_text(hn.to_csv(index=False))
+    md = (["# PROBE TIMING RUN - NOT A RESULT", "", "Every number in this package is from the probe preset (tiny budgets). Do not quote any of it.", ""] if probe else []) + ["# RESULTS SUMMARY", "",
           f"Run `{run_id}`, preset `{preset}`, commit `{prov['commit_hash'][:10]}`. Every number below is read from a file in this package or in the unit shards; "
           "none is typed by hand. Surrogate quantities appear only where labelled `Surrogate`. Anchors and synthetic scenarios are reported separately in the tables.", "",
           "## Headline numbers", "", H.markdown(), "",
