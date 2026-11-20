@@ -25,7 +25,7 @@ class StartSelector:
         X = np.hstack([V, np.tile(alr_features(treated), (pool, 1))])
         prob = self.clf.predict_proba(X)[:, 1]
         sec = self.reg.predict(X)
-        order = np.lexsort((sec, -(prob > 0.5)))              # predicted-feasible first, then lowest predicted SEC
+        order = np.lexsort((sec, (prob <= 0.5).astype(int)))   # predicted-feasible first, then lowest predicted SEC
         idx = order[:k]
         y_idx = [self.names.index(n) for n in STAGE2[self.cycle]]
         return [V[i][y_idx] for i in idx]
