@@ -1,0 +1,52 @@
+{
+  "kappa": 70.97121093331454,
+  "kappa_info": {
+    "method": "median over C1,C2,C3,N2 of m(1-m)/s^2 - 1, s = 1.4826*MAD across anchors",
+    "kappa_by_component": {
+      "C1": 30.051168375625167,
+      "C2": 98.55969626800528,
+      "C3": 43.3827255986238,
+      "N2": 5190.4217554963925
+    },
+    "anchor_mean": {
+      "C1": 0.8244334158855112,
+      "C2": 0.06111425866394611,
+      "C3": 0.022245214574153353,
+      "N2": 0.0825448417230883
+    },
+    "anchor_robust_sd": {
+      "C1": 0.06827469201758826,
+      "C2": 0.024006887885559658,
+      "C3": 0.022137383570915995,
+      "N2": 0.003819392021712552
+    },
+    "n_anchors": 7
+  },
+  "kappa_without_A5": 186.787280044008,
+  "nominal": {
+    "nominal": "A8",
+    "distance_to_mean": [
+      0.13969403414994752,
+      0.15791762788633465,
+      0.10013986877968489,
+      0.5873405615334447,
+      0.13258623445744314,
+      0.10215056033814376,
+      0.07250878946029454
+    ],
+    "anchor_ids": [
+      "A2",
+      "A3",
+      "A4",
+      "A5",
+      "A6",
+      "A7",
+      "A8"
+    ],
+    "reason": "closest (Euclidean, treated mole fractions of C1, C2, C3, N2) to the anchor mean"
+  },
+  "S": 50,
+  "seed": 20260101,
+  "status": "DECIDED method; kappa is computed; anchors are secondary-source",
+  "note": "Sensitivity kappa values to run: 50, 200, 1000 are NOT needed because >= 3 anchors exist; kappa sensitivity uses 0.5x and 2x the computed value"
+}

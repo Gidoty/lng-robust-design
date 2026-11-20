@@ -1,0 +1,144 @@
+# Benchmark inputs. ONLY values stated in the task specification are filled. Every other field is null.
+# A null is never guessed or substituted; validate.py prints BENCHMARK_INPUTS_INCOMPLETE for it.
+# A value that the original paper states as "none / zero" must be entered as an explicit 0, with a note.
+khan2015_n2_single:
+  cycle: n2_single
+  citation: "Khan, M.S., Lee, S., Getu, M., Lee, M., 2015. J. Nat. Gas Sci. Eng. 23, 324-337"
+  published:
+    sec_kwh_per_kg_lng: 0.7449
+  published_basis:
+    equation_of_state: Peng-Robinson
+    eta_compressor: 0.75
+    eta_expander: 0.75
+    mita_K: 3.0
+  inputs:
+    feed_T_C: 30.0
+    feed_P_bar: 50.0
+    feed_composition: null          # mole fractions
+    feed_flow_kg_s: null
+    product_basis: null             # must be 'after_end_flash' for this code; anything else is not supported
+    lng_storage_pressure_bar: null
+    T_lng_C: null
+    P_high_bar: null
+    P_low_bar: null
+    n2_flow_kg_s: null
+    T_exp_in_C: null
+    T_cool_C: null                  # compressor inter/after-cooler outlet temperature
+    compressor_pr_max_per_stage: null
+    dp_mshe_hp_bar: null
+    dp_mshe_lp_bar: null
+    dp_cooler_bar: null
+    dp_intercooler_bar: null
+khan2015_n2_dual:
+  cycle: n2_dual
+  citation: "Khan, M.S., Lee, S., Getu, M., Lee, M., 2015. J. Nat. Gas Sci. Eng. 23, 324-337"
+  published:
+    sec_kwh_per_kg_lng: 0.5007
+  published_basis:
+    equation_of_state: Peng-Robinson
+    eta_compressor: 0.75
+    eta_expander: 0.75
+    mita_K: 3.0
+  inputs:
+    feed_T_C: 30.0
+    feed_P_bar: 50.0
+    feed_composition: null
+    feed_flow_kg_s: null
+    product_basis: null
+    lng_storage_pressure_bar: null
+    T_lng_C: null
+    P_high_bar: null
+    P_low_bar: null
+    n2_flow_kg_s: null
+    T_exp_in_warm_C: null
+    T_exp_in_cold_C: null
+    split: null                     # flow fraction to the warm expander; confirm the flowsheet topology too
+    T_cool_C: null
+    compressor_pr_max_per_stage: null
+    dp_mshe_hp_bar: null
+    dp_mshe_lp_bar: null
+    dp_cooler_bar: null
+    dp_intercooler_bar: null
+jensen_skogestad2009_prico:
+  cycle: smr
+  citation: "Jensen, J.B., Skogestad, S., 2009. Single-cycle mixed-fluid LNG process. Part I: Optimal design. 1st Annual Gas Processing Symposium, Doha. Case 1 (Table 2)"
+  source_documents:
+    - "Part I, Table 2 (p. 4), Case 1: feed 52.2 kg/s, LNG 44.6 kg/s, refrigerant 478 kg/s, Tout -144 C, superheat 10 C, dTmin 1.96 C, eta 82.8 %, Ws 77.5 MW, Ph 22 bar, Pl 4.0 bar, refrigerant composition. SRK equation of state stated on p. 2."
+    - "Part II (Jensen and Skogestad 2009, o11.pdf), Fig. 1 and p. 2: feed 30 C and 40 bar, 35 bar after the main exchanger, refrigerant 30 C after the sea-water cooler. These are stated for Case 8 of Part I; their use for Case 1 is an inference."
+    - "Feed composition, pressure drops: NOT in Part I. Taken from Jacobsen and Skogestad (2013), Table 1 ('copied from Jensen and Skogestad [7]', the nominal optimum of a different case) and Perez (2009, NTNU MSc thesis, p. 16: pressure drops, atmospheric flash). Secondary sources; applicability to Case 1 NOT confirmed."
+  input_provenance: secondary_for_feed_composition_and_pressure_drops
+  published:
+    compressor_power_MW: 77.5
+    lng_flow_kg_s: 44.6
+  published_basis:
+    equation_of_state: SRK            # original used SRK (Multiflash); this code uses Peng-Robinson, and SRK with PR kij as a labelled cross-check
+    eta_compressor: 0.828             # Part I Table 2; isentropic vs polytropic not stated (assumed isentropic)
+    mita_K: 1.96
+  inputs:
+    P_high_bar: 22.0
+    P_low_bar: 4.0
+    low_pressure_definition: compressor_suction   # Perez p.17 and Jacobsen Table 1 (4.445 = Pl + 0.3): Pl is after the 0.3 bar suction drop
+    refrigerant_composition: {C1: 0.333, C2: 0.353, nC4: 0.250, N2: 0.064}
+    eta_compressor: 0.828
+    feed_T_C: 30.0
+    feed_P_bar: 40.0
+    feed_composition: {C1: 0.897, C2: 0.055, C3: 0.018, nC4: 0.001, N2: 0.029}
+    feed_flow_kg_s: 52.2
+    refrigerant_flow_kg_s: 478.0
+    T_lng_C: -144.0
+    product_basis: after_end_flash
+    lng_storage_pressure_bar: 1.01325      # Perez p. 15: expanded to atmospheric pressure. Jensen Part I does not give the value
+    T_cool_C: 30.0
+    compressor_pr_max_per_stage: 6.0       # one compressor casing, pressure ratio 5.5
+    dp_mshe_ng_bar: 5.0
+    dp_mshe_hp_bar: 4.0
+    dp_mshe_lp_bar: 1.0
+    dp_cooler_bar: 0.1
+    dp_intercooler_bar: 0.0
+    dp_suction_bar: 0.3
+  diagnostics_published:
+    superheat_K: 10.0
+austbo2015_n2_single_PR:
+  cycle: n2_single
+  citation: "Austbo, B. (2015) PhD thesis NTNU, Tables 5.1 and 5.4 (Peng-Robinson columns); same content as Austbo and Gundersen (2015), Energy Procedia 64, 63-72 (paper not opened)"
+  source_documents:
+    - "skoge.folk.ntnu.no/publications/thesis/more/Austboe_NTNU_2015/phd-thesis-austboe-revised.pdf, printed p. 111 (Table 5.1 feed) and p. 124 (Table 5.4), PDF pp. 143 and 156. Opened 2026-11-19."
+  points_file: sources/austbo2015_table5_4_PR.csv
+  published_quantity: wnet_kw          # net power per 1 kg/s natural gas
+  published_basis:
+    equation_of_state: Peng-Robinson   # HYSYS Peng-Robinson; kij not stated
+  common_inputs: &austbo_single_common
+    feed_T_C: 20.0
+    feed_P_bar: 55.0
+    feed_composition: {C1: 0.897, C2: 0.055, C3: 0.018, nC4: 0.002, N2: 0.028}
+    feed_flow_kg_s: 1.0
+    T_lng_K: 115.0
+    product_basis: no_flash_at_feed_pressure     # NG cooled to 115 K at feed pressure, no flash
+    T_cool_K: 293.15                              # stream 3 is cooled back to T_I = 293.15 K
+    compressor_pr_max_per_stage: 1000.0           # single compression stage (Section 5.2)
+    dp_mshe_ng_bar: 0.0
+    dp_mshe_hp_bar: 0.0
+    dp_mshe_lp_bar: 0.0
+    dp_cooler_bar: 0.0
+    dp_intercooler_bar: 0.0
+    dp_suction_bar: 0.0
+austbo2015_n2_single_SRK:
+  cycle: n2_single
+  citation: "Austbo (2015) thesis Table 5.4, SRK columns; run with SRK that reuses the PR kij (labelled cross-check)"
+  source_documents:
+    - "Same document and pages as austbo2015_n2_single_PR."
+  points_file: sources/austbo2015_table5_4_SRK.csv
+  published_quantity: wnet_kw
+  published_basis:
+    equation_of_state: SRK
+  common_inputs: *austbo_single_common
+austbo2015_n2_dual_SRK:
+  cycle: n2_dual
+  citation: "Austbo (2015) thesis Table 5.9 (dual nitrogen expander, rigorous HYSYS, SRK) and flowsheet Fig. 5.16 (printed p. 137)"
+  source_documents:
+    - "Same PDF; Table 5.9 printed p. 142 (PDF p. 174); Fig. 5.16 printed p. 137 (PDF p. 169). Feed data as Table 5.1 (p. 111)."
+  points_file: sources/austbo2015_table5_9_SRK.csv
+  published_quantity: wnet_kw
+  published_basis:
+    equation_of_state: SRK
+  common_inputs: *austbo_single_common

@@ -1,0 +1,8 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+# generated run folders are kept out of git except the small reports listed in README
+lng_robust/runs/*/
+!lng_robust/runs/.gitkeep
+*.egg-info/

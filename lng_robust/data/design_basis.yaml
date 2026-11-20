@@ -1,0 +1,78 @@
+# Single design-basis file. Every entry carries a status:
+#   GIVEN       - stated in the task specification / manuscript Table 1 / cited benchmark basis
+#   ASSUMPTION  - chosen by the code author so the model can run; NOT sourced; must be confirmed or replaced
+#   TODO        - needed by the manuscript, not implemented or not yet sourced
+#   DECIDED     - fixed by the authors for this study (D1 to D10); changing it needs the authors
+# Nothing here is a result. Authors must confirm every ASSUMPTION before any number is reported.
+efficiency_compressor:   {value: 0.75, status: GIVEN, note: "Reference-case isentropic efficiency (Khan et al. 2015 basis, per task spec)"}
+efficiency_expander:     {value: 0.75, status: GIVEN, note: "Reference-case isentropic efficiency (Khan et al. 2015 basis, per task spec)"}
+capacity_dependent_efficiency: {value: false, status: TODO, note: "Manuscript Section 2.1 needs a sourced capacity-dependent efficiency correlation; not implemented, efficiencies are constant"}
+mita_min_K:              {value: 3.0, status: GIVEN, note: "Manuscript Table 1 / Khan et al. 2015 basis"}
+feed_T_C:                {value: 30.0, status: ASSUMPTION, note: "Treated-feed temperature; equals the Khan et al. 2015 benchmark feed basis; tested in sensitivity"}
+feed_P_bar:              {value: 50.0, status: ASSUMPTION, note: "Treated-feed pressure; equals the Khan et al. 2015 benchmark feed basis; tested in sensitivity"}
+T_cool_C:                {value: 35.0, status: ASSUMPTION, note: "Compressor inter/after-cooler outlet temperature; Niger Delta ambient about 30 C plus 5 K approach, water cooled. Air cooling would be higher"}
+T_ambient_C:             {value: 30.0, status: ASSUMPTION, note: "Dead-state temperature for exergy"}
+P_ambient_bar:           {value: 1.01325, status: ASSUMPTION, note: "Dead-state pressure for exergy"}
+dp_cooler_bar:           {value: 0.5, status: ASSUMPTION, note: "Pressure drop of each aftercooler"}
+dp_intercooler_bar:      {value: 0.3, status: ASSUMPTION, note: "Pressure drop of each intercooler"}
+dp_mshe_hp_bar:          {value: 1.0, status: ASSUMPTION, note: "Pressure drop of each hot (high-pressure) stream through the MSHE"}
+dp_mshe_ng_bar:          {value: 1.0, status: ASSUMPTION, note: "Pressure drop of the natural-gas stream through the MSHE. Defaults to the same value as dp_mshe_hp_bar; separate so published cases with different NG and refrigerant drops (Jensen: 5 and 4 bar) can be reproduced"}
+dp_suction_bar:          {value: 0.0, status: ASSUMPTION, note: "Additional pressure drop between the MSHE cold-side outlet and the compressor suction (Jensen: 0.3 bar)"}
+dp_mshe_lp_bar:          {value: 0.3, status: ASSUMPTION, note: "Pressure drop of each cold (low-pressure) stream through the MSHE"}
+compressor_pr_max_per_stage: {value: 4.0, status: ASSUMPTION, note: "Maximum pressure ratio per compressor stage; stages are equal-ratio with intercooling"}
+lng_storage_pressure_bar: {value: 1.2, status: ASSUMPTION, note: "End-flash / storage pressure"}
+min_suction_superheat_K: {value: 0.0, status: ASSUMPTION, note: "Required margin above dew point at compressor suction"}
+max_expander_liquid_mass_frac: {value: 0.0, status: ASSUMPTION, note: "Any liquid at the expander outlet is infeasible. Only 0.0 is supported: a two-phase pure-N2 exhaust cannot be represented in the MSHE property table"}
+min_end_flash_liquid_mass_frac: {value: 0.5, status: ASSUMPTION, note: "Product-spec screen: minimum LNG mass fraction after end-flash"}
+mshe_N:                  {value: 100, status: GIVEN, note: "Number of equal-duty enthalpy intervals (task spec default); convergence study in runs/mshe_convergence.csv"}
+mshe_n_table:            {value: 48, status: ASSUMPTION, note: "Temperature points per stream in the property table that is interpolated to the equal-duty nodes; convergence reported"}
+tear_tol:                {value: 1.0e-6, status: GIVEN, note: "Relative tolerance of the refrigerant-loop tear stream"}
+tear_max_iter:           {value: 30, status: ASSUMPTION, note: "Max tear iterations"}
+balance_tol:             {value: 1.0e-3, status: GIVEN, note: "Mass and energy balance closure, 0.1 per cent (manuscript Section 2.5)"}
+pretreat_co2_ppmv:       {value: 50.0, status: GIVEN, note: "World Bank (2015) via manuscript Table 1"}
+pretreat_c4plus_mol_pct: {value: 2.0, status: GIVEN, note: "World Bank (2015) via manuscript Table 1"}
+pretreat_c5plus_mol_pct: {value: 0.1, status: GIVEN, note: "World Bank (2015) via manuscript Table 1"}
+c4_iso_fraction:         {value: 0.5, status: ASSUMPTION, note: "Source reports total C4 only; iso/normal split is unknown. 0.5 is a neutral placeholder; sensitivity needed"}
+c5_iso_fraction:         {value: 0.5, status: ASSUMPTION, note: "Source reports total C5 only; iso/normal split is unknown. 0.5 is a neutral placeholder; sensitivity needed"}
+unassigned_treatment:    {value: renormalise, status: ASSUMPTION, note: "Reported compositions that do not sum to 1 are renormalised for simulation only; the raw sum and the unassigned amount stay in feeds.csv"}
+cvar_alpha:              {value: 0.9, status: DECIDED, note: "D4: CVaR at alpha = 0.9; the worst case is computed as a bound"}
+chance_feasible_fraction: {value: 0.95, status: DECIDED, note: "D4: feasible fraction >= 0.95"}
+sec_penalty_kwh_per_kg:  {value: 2.0, status: ASSUMPTION, note: "SEC_pen assigned to a scenario with no feasible second-stage solution; manuscript leaves value open"}
+ua_budget_factor:        {value: 1.0, status: DECIDED, note: "D2: iso-UA (1.0) is the primary price-of-robustness definition; the UA-growth variant (ua_budget_factor_secondary) is a secondary result. Fixed before any study result"}
+ua_budget_factor_secondary: {value: 1.25, status: DECIDED, note: "D2: secondary UA-growth variant"}
+nominal_design_rule:     {value: knee, status: DECIDED, note: "D3: knee of the SEC-UA front (min-max normalised distance to the utopia point)"}
+n_scenarios_main:        {value: 50, status: DECIDED, note: "D5: S = 50 for the main run; CVaR convergence checked at S = 25, 50, 100 on one cycle"}
+inner_solve_mode:        {value: surrogate_screen_then_rigorous, status: DECIDED, note: "D6: surrogate-assisted screening, then rigorous re-optimisation of the best candidates. Every scenario value in a reported CVaR comes from the rigorous model"}
+excluded_cycles:         {value: [dual_mixed_refrigerant, cascade], status: DECIDED, note: "D7: excluded; stated as a limitation"}
+heavy_hc_removal:        {value: specification_split, status: DECIDED, note: "D8: spec split, no duty. A cold-flash duty is added only if it can be computed rigorously, otherwise a stated limitation"}
+n2_dual_topology:        {value: parallel_expanders_flow_split, status: DECIDED, note: "D9: match Khan et al. 2015 once read; if it cannot be read keep the parallel arrangement and flag it"}
+capacities_tpd:          {value: [100], status: DECIDED, note: "D1: one capacity, 100 t/d. With constant machine efficiency steady-state SEC is scale-invariant and no sourced capacity-efficiency correlation exists, so RQ2 is composition-only. UA is reported at 100 t/d and scales linearly with throughput"}
+random_seed:             {value: 20260101, status: ASSUMPTION, note: "Global seed"}
+bounds:
+  status: ASSUMPTION
+  note: "Decision-variable bounds are code-author assumptions (manuscript Table 2 marks them AUTHOR TO PROVIDE)"
+  smr:
+    P_high_bar: [12.0, 40.0]
+    P_low_bar: [1.5, 8.0]
+    flow_ratio: [0.5, 6.0]          # mol refrigerant per mol feed
+    T_lng_C: [-165.0, -135.0]
+    ua_kw_per_K_per_kgs: [10.0, 400.0]
+    ref_weights: {N2: [0.0, 0.20], C1: [0.10, 0.50], C2: [0.10, 0.50], C3: [0.0, 0.40], nC4: [0.0, 0.40], iC5: [0.0, 0.20]}
+  n2_single:
+    n_rated_mol_per_kg_lng: [100.0, 1200.0]   # rated N2 flow of the machines, mol per kg/s of LNG product
+    P_high_bar: [30.0, 100.0]
+    P_low_bar: [5.0, 20.0]
+    flow_ratio: [2.0, 14.0]
+    T_exp_in_C: [-130.0, -40.0]
+    T_lng_C: [-165.0, -135.0]
+    ua_kw_per_K_per_kgs: [10.0, 400.0]
+  n2_dual:
+    n_rated_mol_per_kg_lng: [100.0, 1200.0]
+    P_high_bar: [30.0, 100.0]
+    P_low_bar: [5.0, 20.0]
+    flow_ratio: [2.0, 14.0]
+    T_exp_in_warm_C: [-80.0, 0.0]
+    T_exp_in_cold_C: [-140.0, -70.0]
+    split: [0.2, 0.8]               # fraction of HP N2 sent to the warm expander
+    T_lng_C: [-165.0, -135.0]
+    ua_kw_per_K_per_kgs: [10.0, 400.0]

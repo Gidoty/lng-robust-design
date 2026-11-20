@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lng-robust"
+version = "0.1.0"
+description = "Computational engine for the price-of-robustness study of modular LNG refrigeration cycles"
+requires-python = ">=3.11"
+
+[tool.setuptools.packages.find]
+include = ["lng_robust*"]
+
+[tool.setuptools.package-data]
+lng_robust = ["data/*.csv", "data/*.yaml"]
+
+[tool.pytest.ini_options]
+testpaths = ["lng_robust/tests"]

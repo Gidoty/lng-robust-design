@@ -1,0 +1,4 @@
+cycle,sec_PR,sec_PRT,sec_change_pct,mita_change_K,ua_change_pct,note
+n2_dual,0.7776102208290975,0.7820955332287391,0.5768072846135404,-0.19291834834018573,2.877155351585393,"hand-set reference designs (not optima, not results); translation c_i = 0.50033 (R Tc/Pc)(0.25969 - Z_RA)"
+n2_single,0.845380193554775,0.8500849173944466,0.556521654462767,-0.19584721943112982,,"hand-set reference designs (not optima, not results); translation c_i = 0.50033 (R Tc/Pc)(0.25969 - Z_RA)"
+smr,0.3321355451513721,0.33395347264145026,0.5473450573468774,-0.19202062212258397,,"hand-set reference designs (not optima, not results); translation c_i = 0.50033 (R Tc/Pc)(0.25969 - Z_RA)"

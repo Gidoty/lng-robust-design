@@ -1,0 +1,13 @@
+# Validation summary (informational; the strict verdicts are in validation_report.md)
+
+Well resolved = printed-input band of the computed power within 5% of the published value.
+
+| benchmark                  | eos                           |   n_points |   n_within_5pct |   mean_abs_dev_all |   max_abs_dev_all |   n_well_resolved |   mean_abs_dev_well_resolved |   max_abs_dev_well_resolved |   n_outside_5pct_and_well_resolved |
+|:---------------------------|:------------------------------|-----------:|----------------:|-------------------:|------------------:|------------------:|-----------------------------:|----------------------------:|-----------------------------------:|
+| austbo2015_n2_dual_SRK     | PR (primary)                  |         15 |              15 |               1.14 |              1.63 |                15 |                         1.14 |                        1.63 |                                  0 |
+| austbo2015_n2_dual_SRK     | SRK with PR kij (cross-check) |         15 |              15 |               0.19 |              0.45 |                15 |                         0.19 |                        0.45 |                                  0 |
+| austbo2015_n2_single_PR    | PR (primary)                  |         15 |              14 |               1.95 |             21.95 |                13 |                         0.29 |                        1.18 |                                  0 |
+| austbo2015_n2_single_SRK   | PR (primary)                  |         15 |              12 |               3.85 |             22.15 |                11 |                         1.29 |                        1.94 |                                  0 |
+| austbo2015_n2_single_SRK   | SRK with PR kij (cross-check) |         15 |              12 |               3.12 |             22.51 |                11 |                         0.24 |                        0.5  |                                  0 |
+| jensen_skogestad2009_prico | PR (primary)                  |          2 |               2 |               0.6  |              0.66 |                 2 |                         0.6  |                        0.66 |                                  0 |
+| jensen_skogestad2009_prico | SRK with PR kij (cross-check) |          2 |               2 |               0.56 |              0.8  |                 2 |                         0.56 |                        0.8  |                                  0 |
