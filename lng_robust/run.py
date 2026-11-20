@@ -1,4 +1,7 @@
-"""End-to-end pipeline.  python -m lng_robust.run --quick   (smoke test: proves the pipeline runs; NOT a result)
+"""LEGACY single-process pipeline (first build, one anchor, in-memory). Superseded by lng_robust.study (chunked units, GitHub Actions workflow); kept for the
+smoke test and for reproducing the first-build diagnostics. Do not use it for study results.
+
+End-to-end pipeline.  python -m lng_robust.run --quick   (smoke test: proves the pipeline runs; NOT a result)
                          python -m lng_robust.run --full    (study-scale budgets; not exercised in the first build)
 
 Pipeline per cycle: nominal NSGA-II -> performance of the nominal design across scenarios (second stage re-optimised)
