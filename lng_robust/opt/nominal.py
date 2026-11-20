@@ -61,11 +61,13 @@ class _Problem(Problem):
 
 
 def run_nominal(cycle, feed, feed_id, m_lng, basis, *, pop=20, n_gen=10, seed=1, log=None, workers=None,
-                capacity_tpd=100, screen_factor=3) -> NominalResult:
+                capacity_tpd=100, screen_factor=3, seeds=None) -> NominalResult:
     names = nominal_var_names(cycle)
     prob = _Problem(cycle, feed, feed_id, m_lng, basis, names, log, workers, capacity_tpd)
     rng = np.random.default_rng(seed)
     cand = prob.xl + rng.random((screen_factor * pop, len(names))) * (prob.xu - prob.xl)
+    if seeds is not None and len(seeds):
+        cand = np.vstack([np.asarray(seeds, float), cand])      # hand-set seed designs join the initial screen
     xs, R = prob.evaluate_vectors(cand, purpose="nominal_initial_screen")
     order = sorted(range(len(R)), key=lambda i: (0 if R[i].feasible else 1, R[i].violation, R[i].sec if R[i].sec == R[i].sec else 9))
     X0 = cand[order[:pop]]

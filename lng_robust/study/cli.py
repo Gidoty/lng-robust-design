@@ -11,6 +11,7 @@ import time
 from pathlib import Path
 
 from lng_robust.opt.parallel import shutdown
+from lng_robust.study.common import NoNominalDesign, write_done
 from lng_robust.study import units, units2
 from lng_robust.study.config import Ctx, get_preset
 
@@ -39,6 +40,9 @@ def main(argv=None):
     print(f"unit {ctx.key}  preset {a.preset}  workers {a.workers}", flush=True)
     try:
         UNITS[a.unit](ctx)
+    except NoNominalDesign as e:
+        print(f"::warning::{ctx.key}: INCOMPLETE, {e}", flush=True)
+        write_done(ctx.out, unit=a.unit, cycle=a.cycle, variant=a.variant, case=a.case, status=f"INCOMPLETE_no_feasible_nominal_design: {e}")
     finally:
         shutdown()
     print(f"unit {ctx.key} finished in {(time.time() - t0) / 60:.1f} min", flush=True)

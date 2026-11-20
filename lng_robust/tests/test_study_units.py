@@ -164,3 +164,23 @@ def test_workflow_structure():
     assert jobs["package"]["if"] and "permissions" in wf and wf["permissions"]["contents"] == "write"
     text = (Path(__file__).parents[2] / ".github" / "workflows" / "study.yml").read_text()
     assert 'python-version: "3.13"' in text and "requirements.lock" in text and "results/${{ github.run_id }}" in text
+
+
+def test_missing_nominal_design_is_reported_incomplete_not_a_crash(tmp_path):
+    from lng_robust.study import cli
+    (tmp_path / "unit-nominal-smr").mkdir()
+    (tmp_path / "unit-nominal-smr" / "nominal.json").write_text(json.dumps(dict(cycle="smr", feasible_found=False, note="no feasible design")))
+    cli.main(["robust", "--cycle", "smr", "--variant", "cvar_iso", "--preset", "probe", "--work", str(tmp_path), "--workers", "1"])
+    done = json.loads((tmp_path / "unit-robust-smr-cvar_iso-s1" / "done.json").read_text())
+    assert done["status"].startswith("INCOMPLETE_no_feasible_nominal_design")
+
+
+def test_nominal_seed_vectors_are_inside_bounds_and_follow_the_variable_order(basis):
+    from lng_robust.analysis.golden import seed_vectors
+    from lng_robust.opt.common import nominal_var_names
+    from lng_robust.opt.space import bounds
+    for cycle in ("smr", "n2_single", "n2_dual"):
+        names = nominal_var_names(cycle)
+        lo, hi = bounds(cycle, names, basis)
+        S = seed_vectors(cycle, names, basis)
+        assert len(S) == 10 and all(((v >= lo - 1e-12) & (v <= hi + 1e-12)).all() for v in S) and len(S[0]) == len(names)

@@ -68,3 +68,21 @@ def evaluate(cases, basis=None, solve_fn=None):
         rows.append(dict(case=c["case"], feed_id=c["feed_id"], feasible=bool(r.feasible), failure_code=r.failure_code,
                          **{k: d.get(k, float("nan")) for k in NUMERIC}))
     return rows
+
+
+def seed_vectors(cycle, names, basis, n_perturbed=9, seed=11):
+    """Initial-search seeds for the nominal NSGA-II: the hand-set design of this module plus small perturbations of it, in nominal_var_names order.
+    They only initialise the search (random candidates are still screened with them); the reported design is whatever NSGA-II returns."""
+    base = _feasible_start(cycle)
+    lo, hi = bounds(cycle, names, basis)
+    rng = np.random.default_rng(seed)
+
+    def vec(b):
+        v = []
+        for n in names:
+            v.append(b["ref"][n[2:]] if n.startswith("w_") else b[n])
+        return np.clip(np.array(v, float), lo, hi)
+    out = [vec(base)]
+    for _ in range(n_perturbed):
+        out.append(np.clip(out[0] + rng.normal(0, 0.03, len(names)) * (hi - lo), lo, hi))
+    return out

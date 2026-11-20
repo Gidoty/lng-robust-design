@@ -39,8 +39,18 @@ def scenario_set(ctx, basis, name="main", S=None):
     return scen, nom, meta
 
 
+class NoNominalDesign(Exception):
+    """The nominal unit found no feasible design; downstream units report INCOMPLETE instead of failing."""
+
+
 def load_nominal(ctx, cycle):
-    return json.loads((ctx.input("nominal", cycle) / "nominal.json").read_text())
+    p = ctx.input("nominal", cycle) / "nominal.json"
+    if not p.exists():
+        raise NoNominalDesign(f"{p} missing")
+    nom = json.loads(p.read_text())
+    if "ua_spec" not in nom:
+        raise NoNominalDesign(f"no feasible nominal design for {cycle}: {nom.get('note')}")
+    return nom
 
 
 def nominal_y0(nom: dict, cycle: str):

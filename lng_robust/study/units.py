@@ -40,10 +40,13 @@ def unit_nominal(ctx, basis=None, tag_out=None):
     sink = EvalSink(out, "evals")
     log = SinkLog(sink, "nominal", ctx.seed)
     t = Timer()
+    from lng_robust.analysis.golden import seed_vectors
+    seeds = seed_vectors(cycle, nominal_var_names(cycle), basis)
     res = run_nominal(cycle, nom_feed.treated, nom_feed.id, M_LNG, basis, pop=P["pop"], n_gen=P["gen"], seed=ctx.seed, log=log,
-                      workers=ctx.workers)
+                      workers=ctx.workers, seeds=seeds)
     sink.close()
     info = dict(cycle=cycle, nominal_anchor=nom_feed.id, feasible_found=res.feasible_found, note=res.note, n_evals=res.n_evals,
+                initial_screen=f"{3 * P['pop']} random candidates plus {len(seeds)} hand-set seed designs (analysis/golden.py)",
                 names=res.names, front=res.front, minutes=t.minutes(), pop=P["pop"], gen=P["gen"])
     if res.best is not None:
         b = res.best
