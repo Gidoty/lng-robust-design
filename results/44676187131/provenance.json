@@ -1,0 +1,879 @@
+{
+  "run_id": "44676187131",
+  "preset": "probe",
+  "commit_hash": "3394ead04dded5324e2cfcb7603de36bed110b6a",
+  "seeds": {
+    "global_seed": 20260101,
+    "scenario_seed": 20260101,
+    "note": "all unit seeds derive from the global seed"
+  },
+  "package_versions": {
+    "thermo": "0.6.1",
+    "chemicals": "1.5.2",
+    "fluids": "1.3.1",
+    "neqsim": "3.29.0",
+    "scikit-learn": "1.9.1",
+    "pymoo": "0.6.2",
+    "SALib": "1.6.0",
+    "numpy": "2.5.5",
+    "scipy": "1.18.1",
+    "pandas": "3.1.1",
+    "pyarrow": "26.0.1",
+    "CoolProp": "8.0.0",
+    "matplotlib": "3.11.2",
+    "joblib": "1.6.0",
+    "PyYAML": "6.0.3",
+    "pytest": "9.2.0"
+  },
+  "python": "3.13.18 (main, Oct 26 2026, 14:19:33) [GCC 15.2.0]",
+  "platform": "Linux-7.0.0-1019-azure-x86_64-with-glibc2.43",
+  "cpu_count": 4,
+  "runner": {
+    "name": "GitHub Actions 1000000281",
+    "os": "Linux",
+    "arch": "X64"
+  },
+  "github": {
+    "run_id": "44676187131",
+    "run_attempt": "1",
+    "repository": "Gidoty/lng-robust-design",
+    "ref": "refs/heads/main"
+  },
+  "requirements_lock_sha256": "045274aeb945369aedcac545ba6512466906230eccdc15f9774dc84e78e91c8d",
+  "design_basis_digest": "7582d3ca1838",
+  "units": [
+    {
+      "folder": "unit-across-n2_dual",
+      "unit": "across",
+      "cycle": "n2_dual",
+      "status": "complete",
+      "minutes": 2.6529071927070618,
+      "designs": [
+        "nominal",
+        "cvar_iso",
+        "cvar_125",
+        "worst_iso"
+      ]
+    },
+    {
+      "folder": "unit-across-n2_single",
+      "unit": "across",
+      "cycle": "n2_single",
+      "status": "complete",
+      "minutes": 3.17375469605128,
+      "designs": [
+        "nominal",
+        "cvar_iso",
+        "cvar_125",
+        "worst_iso"
+      ]
+    },
+    {
+      "folder": "unit-across-smr",
+      "unit": "across",
+      "cycle": "smr",
+      "status": "complete",
+      "minutes": 3.14155105749766,
+      "designs": [
+        "nominal",
+        "cvar_iso",
+        "cvar_125",
+        "worst_iso"
+      ]
+    },
+    {
+      "folder": "unit-nominal-n2_dual",
+      "unit": "nominal",
+      "cycle": "n2_dual",
+      "status": "complete",
+      "n_evals": 51,
+      "minutes": 0.2578003525733948
+    },
+    {
+      "folder": "unit-nominal-n2_single",
+      "unit": "nominal",
+      "cycle": "n2_single",
+      "status": "complete",
+      "n_evals": 51,
+      "minutes": 0.24189677238464355
+    },
+    {
+      "folder": "unit-nominal-smr",
+      "unit": "nominal",
+      "cycle": "smr",
+      "status": "complete",
+      "n_evals": 51,
+      "minutes": 0.6830434044202168
+    },
+    {
+      "folder": "unit-reversal-n2_dual-nominal",
+      "unit": "reversal",
+      "cycle": "n2_dual",
+      "design": "nominal",
+      "status": "complete",
+      "minutes": 0.8581862211227417,
+      "n": 10,
+      "design_used": "nominal"
+    },
+    {
+      "folder": "unit-reversal-n2_dual-robust",
+      "unit": "reversal",
+      "cycle": "n2_dual",
+      "design": "robust",
+      "status": "complete",
+      "minutes": 0.6260598778724671,
+      "n": 10,
+      "design_used": "cvar_iso"
+    },
+    {
+      "folder": "unit-reversal-n2_single-nominal",
+      "unit": "reversal",
+      "cycle": "n2_single",
+      "design": "nominal",
+      "status": "complete",
+      "minutes": 0.6349278012911479,
+      "n": 10,
+      "design_used": "nominal"
+    },
+    {
+      "folder": "unit-reversal-n2_single-robust",
+      "unit": "reversal",
+      "cycle": "n2_single",
+      "design": "robust",
+      "status": "complete",
+      "minutes": 0.6734895507494608,
+      "n": 10,
+      "design_used": "cvar_iso"
+    },
+    {
+      "folder": "unit-reversal-smr-nominal",
+      "unit": "reversal",
+      "cycle": "smr",
+      "design": "nominal",
+      "status": "complete",
+      "minutes": 0.7463233868281046,
+      "n": 10,
+      "design_used": "nominal"
+    },
+    {
+      "folder": "unit-reversal-smr-robust",
+      "unit": "reversal",
+      "cycle": "smr",
+      "design": "robust",
+      "status": "complete",
+      "minutes": 1.6577520370483398,
+      "n": 10,
+      "design_used": "cvar_iso"
+    },
+    {
+      "folder": "unit-robust-n2_dual-cvar_125-s1",
+      "unit": "robust",
+      "cycle": "n2_dual",
+      "variant": "cvar_125",
+      "stage": 1,
+      "status": "complete",
+      "generation": 1,
+      "minutes": 3.428040397167206,
+      "members_evaluated": 6
+    },
+    {
+      "folder": "unit-robust-n2_dual-cvar_125-s2",
+      "unit": "robust",
+      "cycle": "n2_dual",
+      "variant": "cvar_125",
+      "stage": 2,
+      "status": "complete",
+      "generation": 1,
+      "minutes": 4.581610361735026e-06,
+      "members_evaluated": 0
+    },
+    {
+      "folder": "unit-robust-n2_dual-cvar_125-s3",
+      "unit": "robust",
+      "cycle": "n2_dual",
+      "variant": "cvar_125",
+      "stage": 3,
+      "status": "complete",
+      "generation": 1,
+      "minutes": 5.257129669189453e-06,
+      "members_evaluated": 0
+    },
+    {
+      "folder": "unit-robust-n2_dual-cvar_iso-s1",
+      "unit": "robust",
+      "cycle": "n2_dual",
+      "variant": "cvar_iso",
+      "stage": 1,
+      "status": "complete",
+      "generation": 1,
+      "minutes": 2.74151748418808,
+      "members_evaluated": 6
+    },
+    {
+      "folder": "unit-robust-n2_dual-cvar_iso-s2",
+      "unit": "robust",
+      "cycle": "n2_dual",
+      "variant": "cvar_iso",
+      "stage": 2,
+      "status": "complete",
+      "generation": 1,
+      "minutes": 4.712740580240885e-06,
+      "members_evaluated": 0
+    },
+    {
+      "folder": "unit-robust-n2_dual-cvar_iso-s3",
+      "unit": "robust",
+      "cycle": "n2_dual",
+      "variant": "cvar_iso",
+      "stage": 3,
+      "status": "complete",
+      "generation": 1,
+      "minutes": 5.177656809488932e-06,
+      "members_evaluated": 0
+    },
+    {
+      "folder": "unit-robust-n2_dual-worst_iso-s1",
+      "unit": "robust",
+      "cycle": "n2_dual",
+      "variant": "worst_iso",
+      "stage": 1,
+      "status": "complete",
+      "generation": 1,
+      "minutes": 2.6847606182098387,
+      "members_evaluated": 6
+    },
+    {
+      "folder": "unit-robust-n2_dual-worst_iso-s2",
+      "unit": "robust",
+      "cycle": "n2_dual",
+      "variant": "worst_iso",
+      "stage": 2,
+      "status": "complete",
+      "generation": 1,
+      "minutes": 5.9247016906738285e-06,
+      "members_evaluated": 0
+    },
+    {
+      "folder": "unit-robust-n2_dual-worst_iso-s3",
+      "unit": "robust",
+      "cycle": "n2_dual",
+      "variant": "worst_iso",
+      "stage": 3,
+      "status": "complete",
+      "generation": 1,
+      "minutes": 3.321965535481771e-06,
+      "members_evaluated": 0
+    },
+    {
+      "folder": "unit-robust-n2_single-cvar_125-s1",
+      "unit": "robust",
+      "cycle": "n2_single",
+      "variant": "cvar_125",
+      "stage": 1,
+      "status": "complete",
+      "generation": 1,
+      "minutes": 1.5364042838414511,
+      "members_evaluated": 6
+    },
+    {
+      "folder": "unit-robust-n2_single-cvar_125-s2",
+      "unit": "robust",
+      "cycle": "n2_single",
+      "variant": "cvar_125",
+      "stage": 2,
+      "status": "complete",
+      "generation": 1,
+      "minutes": 4.124641418457031e-06,
+      "members_evaluated": 0
+    },
+    {
+      "folder": "unit-robust-n2_single-cvar_125-s3",
+      "unit": "robust",
+      "cycle": "n2_single",
+      "variant": "cvar_125",
+      "stage": 3,
+      "status": "complete",
+      "generation": 1,
+      "minutes": 4.990895589192708e-06,
+      "members_evaluated": 0
+    },
+    {
+      "folder": "unit-robust-n2_single-cvar_iso-s1",
+      "unit": "robust",
+      "cycle": "n2_single",
+      "variant": "cvar_iso",
+      "stage": 1,
+      "status": "complete",
+      "generation": 1,
+      "minutes": 1.4738573551177978,
+      "members_evaluated": 6
+    },
+    {
+      "folder": "unit-robust-n2_single-cvar_iso-s2",
+      "unit": "robust",
+      "cycle": "n2_single",
+      "variant": "cvar_iso",
+      "stage": 2,
+      "status": "complete",
+      "generation": 1,
+      "minutes": 5.95251719156901e-06,
+      "members_evaluated": 0
+    },
+    {
+      "folder": "unit-robust-n2_single-cvar_iso-s3",
+      "unit": "robust",
+      "cycle": "n2_single",
+      "variant": "cvar_iso",
+      "stage": 3,
+      "status": "complete",
+      "generation": 1,
+      "minutes": 4.740556081136068e-06,
+      "members_evaluated": 0
+    },
+    {
+      "folder": "unit-robust-n2_single-worst_iso-s1",
+      "unit": "robust",
+      "cycle": "n2_single",
+      "variant": "worst_iso",
+      "stage": 1,
+      "status": "complete",
+      "generation": 1,
+      "minutes": 1.7315954248110452,
+      "members_evaluated": 6
+    },
+    {
+      "folder": "unit-robust-n2_single-worst_iso-s2",
+      "unit": "robust",
+      "cycle": "n2_single",
+      "variant": "worst_iso",
+      "stage": 2,
+      "status": "complete",
+      "generation": 1,
+      "minutes": 5.1816304524739586e-06,
+      "members_evaluated": 0
+    },
+    {
+      "folder": "unit-robust-n2_single-worst_iso-s3",
+      "unit": "robust",
+      "cycle": "n2_single",
+      "variant": "worst_iso",
+      "stage": 3,
+      "status": "complete",
+      "generation": 1,
+      "minutes": 3.2703081766764323e-06,
+      "members_evaluated": 0
+    },
+    {
+      "folder": "unit-robust-smr-cvar_125-s1",
+      "unit": "robust",
+      "cycle": "smr",
+      "variant": "cvar_125",
+      "stage": 1,
+      "status": "complete",
+      "generation": 1,
+      "minutes": 2.9091919302940368,
+      "members_evaluated": 6
+    },
+    {
+      "folder": "unit-robust-smr-cvar_125-s2",
+      "unit": "robust",
+      "cycle": "smr",
+      "variant": "cvar_125",
+      "stage": 2,
+      "status": "complete",
+      "generation": 1,
+      "minutes": 4.9591064453125e-06,
+      "members_evaluated": 0
+    },
+    {
+      "folder": "unit-robust-smr-cvar_125-s3",
+      "unit": "robust",
+      "cycle": "smr",
+      "variant": "cvar_125",
+      "stage": 3,
+      "status": "complete",
+      "generation": 1,
+      "minutes": 7.22805658976237e-06,
+      "members_evaluated": 0
+    },
+    {
+      "folder": "unit-robust-smr-cvar_iso-s1",
+      "unit": "robust",
+      "cycle": "smr",
+      "variant": "cvar_iso",
+      "stage": 1,
+      "status": "complete",
+      "generation": 1,
+      "minutes": 3.023533801237742,
+      "members_evaluated": 6
+    },
+    {
+      "folder": "unit-robust-smr-cvar_iso-s2",
+      "unit": "robust",
+      "cycle": "smr",
+      "variant": "cvar_iso",
+      "stage": 2,
+      "status": "complete",
+      "generation": 1,
+      "minutes": 7.0015589396158855e-06,
+      "members_evaluated": 0
+    },
+    {
+      "folder": "unit-robust-smr-cvar_iso-s3",
+      "unit": "robust",
+      "cycle": "smr",
+      "variant": "cvar_iso",
+      "stage": 3,
+      "status": "complete",
+      "generation": 1,
+      "minutes": 5.2372614542643225e-06,
+      "members_evaluated": 0
+    },
+    {
+      "folder": "unit-robust-smr-worst_iso-s1",
+      "unit": "robust",
+      "cycle": "smr",
+      "variant": "worst_iso",
+      "stage": 1,
+      "status": "complete",
+      "generation": 1,
+      "minutes": 4.024024907747904,
+      "members_evaluated": 6
+    },
+    {
+      "folder": "unit-robust-smr-worst_iso-s2",
+      "unit": "robust",
+      "cycle": "smr",
+      "variant": "worst_iso",
+      "stage": 2,
+      "status": "complete",
+      "generation": 1,
+      "minutes": 4.1961669921875e-06,
+      "members_evaluated": 0
+    },
+    {
+      "folder": "unit-robust-smr-worst_iso-s3",
+      "unit": "robust",
+      "cycle": "smr",
+      "variant": "worst_iso",
+      "stage": 3,
+      "status": "complete",
+      "generation": 1,
+      "minutes": 7.239977518717448e-06,
+      "members_evaluated": 0
+    },
+    {
+      "folder": "unit-sample-n2_dual",
+      "unit": "sample",
+      "cycle": "n2_dual",
+      "status": "complete",
+      "n_evals": 72,
+      "n_feasible": 29,
+      "minutes": 0.35216819842656455
+    },
+    {
+      "folder": "unit-sample-n2_single",
+      "unit": "sample",
+      "cycle": "n2_single",
+      "status": "complete",
+      "n_evals": 72,
+      "n_feasible": 22,
+      "minutes": 0.4809279163678487
+    },
+    {
+      "folder": "unit-sample-smr",
+      "unit": "sample",
+      "cycle": "smr",
+      "status": "complete",
+      "n_evals": 72,
+      "n_feasible": 11,
+      "minutes": 0.6025629281997681
+    },
+    {
+      "folder": "unit-sens-n2_dual-alpha080",
+      "unit": "sens",
+      "cycle": "n2_dual",
+      "case": "alpha080",
+      "status": "complete",
+      "minutes": 0.0007589340209960937
+    },
+    {
+      "folder": "unit-sens-n2_dual-alpha095",
+      "unit": "sens",
+      "cycle": "n2_dual",
+      "case": "alpha095",
+      "status": "complete",
+      "minutes": 0.0005474607149759928
+    },
+    {
+      "folder": "unit-sens-n2_dual-cool30",
+      "unit": "sens",
+      "cycle": "n2_dual",
+      "case": "cool30",
+      "status": "complete",
+      "minutes": 1.6618285497029623
+    },
+    {
+      "folder": "unit-sens-n2_dual-cool40",
+      "unit": "sens",
+      "cycle": "n2_dual",
+      "case": "cool40",
+      "status": "complete",
+      "minutes": 1.2294594605763753
+    },
+    {
+      "folder": "unit-sens-n2_dual-eff070",
+      "unit": "sens",
+      "cycle": "n2_dual",
+      "case": "eff070",
+      "status": "complete",
+      "minutes": 1.2748735904693604
+    },
+    {
+      "folder": "unit-sens-n2_dual-eff080",
+      "unit": "sens",
+      "cycle": "n2_dual",
+      "case": "eff080",
+      "status": "complete",
+      "minutes": 1.0004995385805766
+    },
+    {
+      "folder": "unit-sens-n2_dual-fieldD",
+      "unit": "sens",
+      "cycle": "n2_dual",
+      "case": "fieldD",
+      "status": "complete",
+      "minutes": 2.3510454297065735
+    },
+    {
+      "folder": "unit-sens-n2_dual-fieldE_secondary",
+      "unit": "sens",
+      "cycle": "n2_dual",
+      "case": "fieldE_secondary",
+      "status": "complete",
+      "minutes": 2.1035901069641114
+    },
+    {
+      "folder": "unit-sens-n2_dual-kappa_x0.5",
+      "unit": "sens",
+      "cycle": "n2_dual",
+      "case": "kappa_x0.5",
+      "status": "complete",
+      "minutes": 1.8027652502059937
+    },
+    {
+      "folder": "unit-sens-n2_dual-kappa_x2",
+      "unit": "sens",
+      "cycle": "n2_dual",
+      "case": "kappa_x2",
+      "status": "complete",
+      "minutes": 1.8828402042388916
+    },
+    {
+      "folder": "unit-sens-n2_dual-mita2",
+      "unit": "sens",
+      "cycle": "n2_dual",
+      "case": "mita2",
+      "status": "complete",
+      "minutes": 1.0263877590497335
+    },
+    {
+      "folder": "unit-sens-n2_dual-mita5",
+      "unit": "sens",
+      "cycle": "n2_dual",
+      "case": "mita5",
+      "status": "complete",
+      "minutes": 1.727676773071289
+    },
+    {
+      "folder": "unit-sens-n2_dual-pen150",
+      "unit": "sens",
+      "cycle": "n2_dual",
+      "case": "pen150",
+      "status": "complete",
+      "minutes": 0.0007435162862141927
+    },
+    {
+      "folder": "unit-sens-n2_dual-pen300",
+      "unit": "sens",
+      "cycle": "n2_dual",
+      "case": "pen300",
+      "status": "complete",
+      "minutes": 0.0005914926528930664
+    },
+    {
+      "folder": "unit-sens-n2_single-alpha080",
+      "unit": "sens",
+      "cycle": "n2_single",
+      "case": "alpha080",
+      "status": "complete",
+      "minutes": 0.0005967577298482259
+    },
+    {
+      "folder": "unit-sens-n2_single-alpha095",
+      "unit": "sens",
+      "cycle": "n2_single",
+      "case": "alpha095",
+      "status": "complete",
+      "minutes": 0.0008153398831685384
+    },
+    {
+      "folder": "unit-sens-n2_single-cool30",
+      "unit": "sens",
+      "cycle": "n2_single",
+      "case": "cool30",
+      "status": "complete",
+      "minutes": 1.8480505704879762
+    },
+    {
+      "folder": "unit-sens-n2_single-cool40",
+      "unit": "sens",
+      "cycle": "n2_single",
+      "case": "cool40",
+      "status": "complete",
+      "minutes": 2.122872058550517
+    },
+    {
+      "folder": "unit-sens-n2_single-eff070",
+      "unit": "sens",
+      "cycle": "n2_single",
+      "case": "eff070",
+      "status": "complete",
+      "minutes": 0.9604384422302246
+    },
+    {
+      "folder": "unit-sens-n2_single-eff080",
+      "unit": "sens",
+      "cycle": "n2_single",
+      "case": "eff080",
+      "status": "complete",
+      "minutes": 1.8883596380551657
+    },
+    {
+      "folder": "unit-sens-n2_single-fieldD",
+      "unit": "sens",
+      "cycle": "n2_single",
+      "case": "fieldD",
+      "status": "complete",
+      "minutes": 1.3889963547388713
+    },
+    {
+      "folder": "unit-sens-n2_single-fieldE_secondary",
+      "unit": "sens",
+      "cycle": "n2_single",
+      "case": "fieldE_secondary",
+      "status": "complete",
+      "minutes": 1.2912184278170267
+    },
+    {
+      "folder": "unit-sens-n2_single-kappa_x0.5",
+      "unit": "sens",
+      "cycle": "n2_single",
+      "case": "kappa_x0.5",
+      "status": "complete",
+      "minutes": 2.217314398288727
+    },
+    {
+      "folder": "unit-sens-n2_single-kappa_x2",
+      "unit": "sens",
+      "cycle": "n2_single",
+      "case": "kappa_x2",
+      "status": "complete",
+      "minutes": 1.5897791981697083
+    },
+    {
+      "folder": "unit-sens-n2_single-mita2",
+      "unit": "sens",
+      "cycle": "n2_single",
+      "case": "mita2",
+      "status": "complete",
+      "minutes": 1.6636104544003805
+    },
+    {
+      "folder": "unit-sens-n2_single-mita5",
+      "unit": "sens",
+      "cycle": "n2_single",
+      "case": "mita5",
+      "status": "complete",
+      "minutes": 1.0467548886934916
+    },
+    {
+      "folder": "unit-sens-n2_single-pen150",
+      "unit": "sens",
+      "cycle": "n2_single",
+      "case": "pen150",
+      "status": "complete",
+      "minutes": 0.0007336854934692383
+    },
+    {
+      "folder": "unit-sens-n2_single-pen300",
+      "unit": "sens",
+      "cycle": "n2_single",
+      "case": "pen300",
+      "status": "complete",
+      "minutes": 0.0006137530008951823
+    },
+    {
+      "folder": "unit-sens-smr-alpha080",
+      "unit": "sens",
+      "cycle": "smr",
+      "case": "alpha080",
+      "status": "complete",
+      "minutes": 0.0006339907646179199
+    },
+    {
+      "folder": "unit-sens-smr-alpha095",
+      "unit": "sens",
+      "cycle": "smr",
+      "case": "alpha095",
+      "status": "complete",
+      "minutes": 0.0007359107335408528
+    },
+    {
+      "folder": "unit-sens-smr-cool30",
+      "unit": "sens",
+      "cycle": "smr",
+      "case": "cool30",
+      "status": "complete",
+      "minutes": 1.7615919351577758
+    },
+    {
+      "folder": "unit-sens-smr-cool40",
+      "unit": "sens",
+      "cycle": "smr",
+      "case": "cool40",
+      "status": "INCOMPLETE_no_feasible_nominal",
+      "minutes": 0.34127701123555504
+    },
+    {
+      "folder": "unit-sens-smr-eff070",
+      "unit": "sens",
+      "cycle": "smr",
+      "case": "eff070",
+      "status": "complete",
+      "minutes": 1.5869036634763083
+    },
+    {
+      "folder": "unit-sens-smr-eff080",
+      "unit": "sens",
+      "cycle": "smr",
+      "case": "eff080",
+      "status": "complete",
+      "minutes": 1.8746047576268514
+    },
+    {
+      "folder": "unit-sens-smr-fieldD",
+      "unit": "sens",
+      "cycle": "smr",
+      "case": "fieldD",
+      "status": "complete",
+      "minutes": 2.5940942724545795
+    },
+    {
+      "folder": "unit-sens-smr-fieldE_secondary",
+      "unit": "sens",
+      "cycle": "smr",
+      "case": "fieldE_secondary",
+      "status": "complete",
+      "minutes": 2.7258416016896567
+    },
+    {
+      "folder": "unit-sens-smr-kappa_x0.5",
+      "unit": "sens",
+      "cycle": "smr",
+      "case": "kappa_x0.5",
+      "status": "complete",
+      "minutes": 1.947082265218099
+    },
+    {
+      "folder": "unit-sens-smr-kappa_x2",
+      "unit": "sens",
+      "cycle": "smr",
+      "case": "kappa_x2",
+      "status": "complete",
+      "minutes": 1.8651510318120321
+    },
+    {
+      "folder": "unit-sens-smr-mita2",
+      "unit": "sens",
+      "cycle": "smr",
+      "case": "mita2",
+      "status": "complete",
+      "minutes": 3.0137597560882567
+    },
+    {
+      "folder": "unit-sens-smr-mita5",
+      "unit": "sens",
+      "cycle": "smr",
+      "case": "mita5",
+      "status": "INCOMPLETE_no_feasible_nominal",
+      "minutes": 0.42867584228515626
+    },
+    {
+      "folder": "unit-sens-smr-pen150",
+      "unit": "sens",
+      "cycle": "smr",
+      "case": "pen150",
+      "status": "complete",
+      "minutes": 0.0006192882855733235
+    },
+    {
+      "folder": "unit-sens-smr-pen300",
+      "unit": "sens",
+      "cycle": "smr",
+      "case": "pen300",
+      "status": "complete",
+      "minutes": 0.000617508093516032
+    },
+    {
+      "folder": "unit-sobol-n2_dual",
+      "unit": "sobol",
+      "cycle": "n2_dual",
+      "status": "complete",
+      "minutes": 0.20821752548217773
+    },
+    {
+      "folder": "unit-sobol-n2_single",
+      "unit": "sobol",
+      "cycle": "n2_single",
+      "status": "complete",
+      "minutes": 0.1338710387547811
+    },
+    {
+      "folder": "unit-sobol-smr",
+      "unit": "sobol",
+      "cycle": "smr",
+      "status": "complete",
+      "minutes": 0.28664801518122357
+    },
+    {
+      "folder": "unit-sobol_pref",
+      "unit": "sobol_pref",
+      "status": "complete"
+    },
+    {
+      "folder": "unit-surrogate-n2_dual",
+      "unit": "surrogate",
+      "cycle": "n2_dual",
+      "status": "complete",
+      "minutes": 0.02937232255935669,
+      "n_train": 72
+    },
+    {
+      "folder": "unit-surrogate-n2_single",
+      "unit": "surrogate",
+      "cycle": "n2_single",
+      "status": "complete",
+      "minutes": 0.027477546532948812,
+      "n_train": 72
+    },
+    {
+      "folder": "unit-surrogate-smr",
+      "unit": "surrogate",
+      "cycle": "smr",
+      "status": "complete",
+      "minutes": 0.03198330005009969,
+      "n_train": 72
+    }
+  ]
+}
