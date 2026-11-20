@@ -109,6 +109,20 @@ Measured inputs (4-core runner class, from the probe shards): 0.62 s per rigorou
 
 The new plan does 7.8 times more evaluations than the old one at a shorter critical path. Runner-minutes are not scarce (public repository). Actual runner-minutes of the full run are in section 9.
 
+Measured during the full run (runner, 4 cores), against the plan:
+
+| Unit | Plan (min) | Measured (min) |
+|---|---|---|
+| nominal SMR, single N2, dual N2 | 10.6, 5.1, 5.7 | 20.6, 14.6, 10.4 |
+| sample SMR, single N2, dual N2 | 32.9, 12.3, 14.8 | 60.2, 36.2, 30.4 |
+| surrogate SMR, single N2, dual N2 | not planned | 6.4, 5.2, 4.4 |
+| sobol and one-at-a-time SMR, single N2, dual N2 | 3.3, 2.8, 2.8 | 1.4, 0.3, 0.5 |
+
+The nominal and sampling stages evaluate random designs that share no flash states, so they cost 1.0 to 1.3 s per evaluation, about twice the plan. The second-stage loop reuses cached states and is cheaper per evaluation.
+For the stage that decides the schedule I measured one SMR robust member at full scale on this 4-core container (S = 50 scenarios, 40 evaluations per scenario, 2,000 evaluations): **5.1 min**, against 6.1 min in the plan.
+That gives about 61 min per generation of 12 members, so the SMR chain needs 3 of the 5 chained jobs (4 generations in each of the first two jobs, 3 in the third), about 11 h of compute.
+Logs of a running job cannot be read through the API (HTTP 404), so the chain's real speed is visible only when each stage job ends (its `done.json` has `generation` and `minutes`).
+
 ## 3. Phases 5 to 9: what the code does
 
 All units: `python -m lng_robust.study.cli <unit> --cycle <c> [--variant v] [--case k] --preset probe|full --work work`.
@@ -223,7 +237,9 @@ Resume commands (checkpoints are artifacts of the run, so a re-run job continues
 - the package alone: `python -m lng_robust.study.package --work work --out results_package --run-id 44682889025 --preset full` after `gh run download 44682889025 -p 'unit-*' -D work`.
 - if GitHub refused the workflow file: `study.yml.txt` in the repository root is a copy to paste through the web page. (Not needed: the push of `.github/workflows/study.yml` was accepted.)
 
-Runner-minutes: {{RUNNER_MINUTES}}
+Runner-minutes: as of 2026-11-20 07:46 UTC the full run had used 487 runner-minutes (201 in finished jobs, 286 in jobs still running). GitHub does not bill public repositories and its usage API reports 0 ms,
+so the final figure is the sum of all job durations of run 44682889025 (Actions UI or `gh run view 44682889025 --json jobs`). The plan estimate is about 5,650 runner-minutes (section 2.5).
+The four probe runs together used roughly 450 runner-minutes (estimate from job counts, not measured).
 
 ## 10. Failure handling
 
