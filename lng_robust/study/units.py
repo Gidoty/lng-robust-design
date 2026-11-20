@@ -149,7 +149,7 @@ def unit_robust(ctx):
         warm = {}
     sink = EvalSink(out, "evals")
     target = P["gens"]
-    inner = dict(P["inner"], seed=ctx.seed)
+    inner = dict(P["inner"], **P.get("inner_by_cycle", {}).get(cycle, {}), seed=ctx.seed)
     archive = open(out / "archive.jsonl", "a")
     t_unit = Timer()
     member_counter = [0]
@@ -291,7 +291,19 @@ def unit_across(ctx):
     kw = dict(max_evals=P["max_evals"], n_restarts=P["n_restarts"], maxiter=P["maxiter"])
     res = eval_designs_on_set(ctx, cycle, designs, scen, basis, nom, kw, "across", sink, models)
     z0 = eval_designs_on_set(ctx, cycle, designs, [nom_feed], basis, nom, kw, "across_z0", sink, models)
+    # SEC at z0 is the one number that enters Eq. 8, so it gets extra effort: the best rigorous value of three searches
+    # (the scenario-level search above, a long hybrid search with restarts, and a long Nelder-Mead run).
+    kw_long = dict(max_evals=P["z0_long_evals"], n_restarts=3, maxiter=20)
+    kw_nm = dict(method="nm", maxfev=P["z0_nm_evals"])
+    z0_long = eval_designs_on_set(ctx, cycle, designs, [nom_feed], basis, nom, kw_long, "across_z0_long", sink, models)
+    z0_nm = eval_designs_on_set(ctx, cycle, designs, [nom_feed], basis, nom, kw_nm, "across_z0_nm", sink, None)
     sink.close()
+    sec_z0 = {}
+    for name in designs:
+        cands = {k: v[name].sec[0] for k, v in (("scenario_search", z0), ("hybrid_long", z0_long), ("nelder_mead_long", z0_nm)) if v[name].feasible[0]}
+        if name == "nominal" and nom.get("sec") == nom.get("sec"):
+            cands["nominal_nsga2_own_optimum"] = float(nom["sec"])
+        sec_z0[name] = (min(cands.values()) if cands else float("nan"), cands)
     rows, summary = [], []
     sc_by_id = {f.id: f for f in scen}
     for name, de in res.items():
@@ -302,7 +314,7 @@ def unit_across(ctx):
                              n2_pct_feed=100 * f.treated.get("N2", 0.0), y=json.dumps(de.y.get(sid))))
         summary.append(dict(cycle=cycle, design=name, CVaR=de.cvar(basis.cvar_alpha), worst=de.worst, feasible_fraction=de.feasible_fraction,
                             mean_sec_feasible=float(de.sec[de.feasible].mean()) if de.feasible.any() else float("nan"),
-                            sec_z0=float(z0[name].sec[0]) if z0[name].feasible[0] else float("nan"), feasible_z0=bool(z0[name].feasible[0]),
+                            sec_z0=sec_z0[name][0], feasible_z0=bool(sec_z0[name][0] == sec_z0[name][0]),
                             n_anchor_feasible=int(sum(de.feasible[i] for i, s in enumerate(de.ids) if not sc_by_id[s].synthetic)),
                             n_anchor=int(sum(not sc_by_id[s].synthetic for s in de.ids)),
                             n_synth_feasible=int(sum(de.feasible[i] for i, s in enumerate(de.ids) if sc_by_id[s].synthetic)),
@@ -314,14 +326,17 @@ def unit_across(ctx):
     for name, de in res.items():
         if name == "nominal":
             continue
-        s = por_mod.por_summary(de.sec, nd.sec, de.feasible, nd.feasible, z0[name].sec[0], z0["nominal"].sec[0], basis.cvar_alpha,
+        s = por_mod.por_summary(de.sec, nd.sec, de.feasible, nd.feasible, sec_z0[name][0], sec_z0["nominal"][0], basis.cvar_alpha,
                                 B=ctx.preset["bootstrap"], seed=ctx.seed)
-        por_rows.append(dict(cycle=cycle, design=name, feasible_z0_robust=bool(z0[name].feasible[0]), feasible_z0_nominal=bool(z0["nominal"].feasible[0]), **s))
+        por_rows.append(dict(cycle=cycle, design=name, feasible_z0_robust=bool(sec_z0[name][0] == sec_z0[name][0]), feasible_z0_nominal=bool(sec_z0["nominal"][0] == sec_z0["nominal"][0]),
+                             sec_z0_robust=sec_z0[name][0], sec_z0_nominal=sec_z0["nominal"][0], **s))
+    (ctx.out / "sec_z0_candidates.json").write_text(json.dumps({k: dict(best=v[0], candidates=v[1]) for k, v in sec_z0.items()}, indent=2, default=float))
     pd.DataFrame(por_rows).to_csv(ctx.out / "price_of_robustness.csv", index=False)
     # the designs at z0 (Tables 5 and 6): re-solve once serially to keep exergy numbers and LNG N2
     dz = {}
     for name, x1 in designs.items():
-        y = z0[name].y.get(nom_feed.id)
+        best_src = min((v for v in (z0, z0_long, z0_nm) if v[name].feasible[0]), key=lambda v: v[name].sec[0], default=None)
+        y = best_src[name].y.get(nom_feed.id) if best_src is not None else None
         if y is None:
             dz[name] = dict(feasible=False)
             continue
