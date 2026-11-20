@@ -43,7 +43,7 @@ def _job(args):
         out = solve_nelder_mead(cycle, feed, M_LNG, x1, y0, lo, hi, basis, maxfev=kw["maxfev"])
     elif method == "hybrid":
         out = solve_hybrid(cycle, feed, M_LNG, x1, y0, lo, hi, basis, max_evals=kw["max_evals"], n_restarts=kw["n_restarts"], seed=1,
-                           box=kw.get("box", 0.20), feas_evals=kw.get("feas_evals", 6), feas_max=kw.get("feas_max", 24), maxiter=kw.get("maxiter", 12))
+                           box=kw.get("box", 0.20), feas_max=kw.get("feas_max", 24), maxiter=kw.get("maxiter", 12))
     else:
         out = solve_slsqp(cycle, feed, M_LNG, x1, y0, lo, hi, basis, max_evals=kw["max_evals"], n_restarts=kw["n_restarts"], seed=1)
     wall = time.perf_counter() - t

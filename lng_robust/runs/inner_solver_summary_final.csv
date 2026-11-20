@@ -1,0 +1,13 @@
+cycle,method,baseline,n_both,n_equal_or_lower,mean_diff_pct,max_worse_pct,evals_method,evals_base,wall_method,wall_base
+n2_dual,hybrid40,nm40,10,1,9.24,19.69,400,397,78,204
+n2_dual,hybrid40,nm150_reference,10,1,18.23,29.78,400,1497,78,791
+n2_dual,hybrid80_r3,nm40,10,5,0.93,19.69,800,397,159,204
+n2_dual,hybrid80_r3,nm150_reference,10,5,9.33,29.78,800,1497,159,791
+n2_single,hybrid40,nm40,10,10,-7.98,-1.94,400,395,75,156
+n2_single,hybrid40,nm150_reference,10,6,0.14,7.88,400,1488,75,615
+n2_single,hybrid80_r3,nm40,10,10,-13.9,-10.83,800,395,129,156
+n2_single,hybrid80_r3,nm150_reference,10,10,-6.31,-3.21,800,1488,129,615
+smr,hybrid40,nm40,10,6,0.71,8.12,400,393,210,445
+smr,hybrid40,nm150_reference,10,2,3.53,9.35,400,1472,210,1909
+smr,hybrid80_r3,nm40,10,7,-1.67,4.21,800,393,475,445
+smr,hybrid80_r3,nm150_reference,10,5,1.11,9.35,800,1472,475,1909

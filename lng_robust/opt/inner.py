@@ -246,11 +246,14 @@ def solve_tr_slp(cycle, feed, m_lng, x1, y0, y_lo, y_hi, basis, *, max_evals=40,
     return InnerResult(ev.best, ev.best_y, ev.evals, len(ev.evals), "tr_slp", used, start_label)
 
 
-def solve_hybrid(cycle, feed, m_lng, x1, y0, y_lo, y_hi, basis, *, max_evals=40, n_restarts=0, seed=1, feas_evals=6, feas_max=24, box=0.20, maxiter=12,
+class _Found(Exception):
+    """Raised inside the feasibility phase as soon as the rigorous model has accepted a point."""
+
+
+def solve_hybrid(cycle, feed, m_lng, x1, y0, y_lo, y_hi, basis, *, max_evals=40, n_restarts=0, seed=1, feas_max=24, box=0.20, maxiter=12,
                  extra_starts=None, start_label="warm", **_) -> InnerResult:
     """Second-stage solver used by the study.
-    Phase A: penalised Nelder-Mead in chunks of `feas_evals` evaluations, continued from the least-violating point, until a rigorous-feasible
-             point exists or `feas_max` evaluations are spent.
+    Phase A: one penalised Nelder-Mead run (at most `feas_max` evaluations) that stops at the first rigorous-feasible point.
     Phase B: SLSQP restricted to a box of half-width `box` (scaled units) around the best feasible point, using the remaining budget.
     Restarts (random or surrogate-screened starting points) repeat both phases while budget remains. Every accepted value is rigorous.
     Chosen after the comparison in runs/inner_solver_comparison*.csv (see STATUS.md)."""
@@ -261,18 +264,17 @@ def solve_hybrid(cycle, feed, m_lng, x1, y0, y_lo, y_hi, basis, *, max_evals=40,
 
     def f(u):
         r = ev.run(u)
+        if ev.best is not None:
+            raise _Found()
         return (r.sec if r.sec == r.sec else 1.5) + 20.0 * r.violation
 
     def one(start):
         try:
-            spent = 0
-            while ev.best is None and spent < feas_max:
-                n_before = len(ev.evals)
-                sp_minimize(f, start, method="Nelder-Mead", options=dict(maxfev=feas_evals, xatol=1e-4, fatol=1e-6, initial_simplex=_simplex(start)))
-                spent += max(1, len(ev.evals) - n_before)
-                if ev.best is None and ev.cache:
-                    lowest = min(ev.cache.items(), key=lambda kv: (kv[1].violation if kv[1].violation == kv[1].violation else 1e9))[0]
-                    start = np.asarray(lowest, float)         # continue from the least-violating point found so far
+            if ev.best is None:
+                try:
+                    sp_minimize(f, start, method="Nelder-Mead", options=dict(maxfev=feas_max, xatol=1e-4, fatol=1e-6, initial_simplex=_simplex(start)))
+                except _Found:
+                    pass
             if ev.best is not None:
                 _slsqp_from(ev, np.clip((ev.best_y - y_lo) / span, 0.0, 1.0), maxiter, box=box)
         except _Budget:
@@ -286,5 +288,6 @@ def solve_hybrid(cycle, feed, m_lng, x1, y0, y_lo, y_hi, basis, *, max_evals=40,
         used += 1
         st = (np.clip((np.asarray(extra_starts[k], float) - y_lo) / span, 0.0, 1.0) if extra_starts is not None and k < len(extra_starts)
               else np.clip(u0 + 0.25 * (rng.random(len(u0)) - 0.5), 0, 1))
+        ev_best_before = ev.best
         one(st)
     return InnerResult(ev.best, ev.best_y, ev.evals, len(ev.evals), "hybrid", used, start_label)

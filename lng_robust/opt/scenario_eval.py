@@ -28,7 +28,7 @@ def scenario_job(args):
                           extra_starts=kw.get("extra_starts"))
     else:    # hybrid: penalised Nelder-Mead to feasibility, then SLSQP in a trust box (see opt/inner.py and runs/inner_solver_*.csv)
         out = solve_hybrid(cycle, treated, m_lng, x1, y0, y_lo, y_hi, basis, max_evals=kw.get("max_evals", 40), n_restarts=kw.get("n_restarts", 0),
-                           seed=kw.get("seed", 1), box=kw.get("box", 0.20), feas_evals=kw.get("feas_evals", 6), feas_max=kw.get("feas_max", 24),
+                           seed=kw.get("seed", 1), box=kw.get("box", 0.20), feas_max=kw.get("feas_max", 24),
                            maxiter=kw.get("maxiter", 12),
                            extra_starts=kw.get("extra_starts"))
     stage1 = {k: v for k, v in x1.items() if k in ("ua_installed_kw_per_K", "n_ref_rated_mol_s")}
@@ -74,10 +74,16 @@ def evaluate_design(cycle, scen, m_lng, x1, basis, *, warm: dict, y_default, kw,
                     starts: dict | None = None, serial=False) -> DesignEval:
     tasks = []
     for f in scen:
-        y0 = warm.get(f.id) or y_default
+        y0 = warm.get(f.id)
         k = dict(kw)
-        if starts and starts.get(f.id) is not None:
-            k["extra_starts"] = starts[f.id]
+        sf = starts.get(f.id) if starts else None
+        if y0 is None:
+            # cold start (no solved neighbour yet): begin at the surrogate's best-ranked point (decision D6: surrogate screening, then rigorous
+            # re-optimisation); the remaining screened points are the restart points
+            y0 = sf[0] if sf else y_default
+            sf = sf[1:] if sf else sf
+        if sf:
+            k["extra_starts"] = sf
         tasks.append((cycle, f.id, f.synthetic, f.parent_id, f.treated, m_lng, x1, np.asarray(y0, float), basis, k,
                       dict(unit=unit, member=member, purpose=purpose)))
     if serial or workers == 1:

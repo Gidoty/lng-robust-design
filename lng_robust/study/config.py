@@ -33,7 +33,7 @@ PRESETS = {
                   sobol=dict(N=64, oat_points=3), sens=dict(nominal=dict(pop=8, gen=2), k_designs=1, max_evals=20, n_restarts=1),
                   gp_max=300, bootstrap=200),
     "full": dict(S=None, nominal=dict(pop=60, gen=40), sample=dict(n0=2000, rounds=10, batch=800),
-                 robust=dict(pop=16, gens=10, inner=dict(max_evals=40, n_restarts=3, maxiter=12), unit_wall_min=250),
+                 robust=dict(pop=16, gens=10, inner=dict(max_evals=40, n_restarts=2, maxiter=12), unit_wall_min=250),
                  across=dict(max_evals=80, n_restarts=3, maxiter=15), reversal=dict(n_comp=300, max_evals=40, n_restarts=2),
                  sobol=dict(N=1024, oat_points=9), sens=dict(nominal=dict(pop=40, gen=25), k_designs=4, max_evals=40, n_restarts=3),
                  gp_max=1500, bootstrap=5000),
