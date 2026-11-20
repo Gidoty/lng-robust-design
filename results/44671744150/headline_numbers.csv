@@ -1,0 +1,15 @@
+label,value,unit,source_file,source_row,source_column
+Nominal SEC (n2_single),1.0275164597844173,kWh/kg,tables/T5_nominal_designs.csv,cycle=n2_single,SEC_kWh_per_kg
+Nominal LNG N2 content (n2_single),0.22185506621404408,mol %,tables/T5_nominal_designs.csv,cycle=n2_single,LNG_N2_mol_pct
+Nominal UA (n2_single),84.50815507334197,kW/K,tables/T5_nominal_designs.csv,cycle=n2_single,UA_kW_per_K
+Nominal SEC (n2_dual),0.8517122749106125,kWh/kg,tables/T5_nominal_designs.csv,cycle=n2_dual,SEC_kWh_per_kg
+Nominal LNG N2 content (n2_dual),0.16012832716677444,mol %,tables/T5_nominal_designs.csv,cycle=n2_dual,LNG_N2_mol_pct
+Nominal UA (n2_dual),150.73811853715983,kW/K,tables/T5_nominal_designs.csv,cycle=n2_dual,UA_kW_per_K
+"Surrogate FFR overall, gradient boosting (smr)",7.936507936507936,%,tables/T7_surrogate_performance.csv,"cycle=smr, model=gradient_boosting, output=feasibility",FFR_pct
+"Surrogate FFR near MITA limit, gradient boosting (smr)",14.285714285714285,%,tables/T7_surrogate_performance.csv,"cycle=smr, model=gradient_boosting, output=feasibility",FFR_near_pct
+"Surrogate FFR overall, gradient boosting (n2_single)",19.230769230769234,%,tables/T7_surrogate_performance.csv,"cycle=n2_single, model=gradient_boosting, output=feasibility",FFR_pct
+"Surrogate FFR near MITA limit, gradient boosting (n2_single)",66.66666666666666,%,tables/T7_surrogate_performance.csv,"cycle=n2_single, model=gradient_boosting, output=feasibility",FFR_near_pct
+"Surrogate FFR overall, gradient boosting (n2_dual)",28.000000000000004,%,tables/T7_surrogate_performance.csv,"cycle=n2_dual, model=gradient_boosting, output=feasibility",FFR_pct
+"Surrogate FFR near MITA limit, gradient boosting (n2_dual)",75.0,%,tables/T7_surrogate_performance.csv,"cycle=n2_dual, model=gradient_boosting, output=feasibility",FFR_near_pct
+"Surrogate SEC MAE, gradient boosting (n2_single)",0.20857743082576596,kWh/kg,tables/T7_surrogate_performance.csv,"cycle=n2_single, model=gradient_boosting, output=SEC",MAE
+"Surrogate SEC MAE, gradient boosting (n2_dual)",0.14776735698470703,kWh/kg,tables/T7_surrogate_performance.csv,"cycle=n2_dual, model=gradient_boosting, output=SEC",MAE
