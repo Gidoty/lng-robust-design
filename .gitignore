@@ -6,3 +6,6 @@ __pycache__/
 lng_robust/runs/*/
 !lng_robust/runs/.gitkeep
 *.egg-info/
+work/
+results_package/
+*.joblib

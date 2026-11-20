@@ -60,19 +60,18 @@ def _stream_table(s: Stream, n_table: int):
         T0_, H0_, S0_ = (np.asarray(a, float) for a in s.table)
         T = np.unique(np.concatenate([[lo, hi], T0_[(T0_ > lo) & (T0_ < hi)]]))
         return T, np.interp(T, T0_, H0_) * s.n, np.interp(T, T0_, S0_) * s.n
-    def P_at(T):
-        f = (T - s.T_start) / (s.T_end - s.T_start)
-        return s.P_start + f * (s.P_end - s.P_start)
     pts = set(np.linspace(lo, hi, n_table).tolist())
     for P in (s.P_start, s.P_end):
         for tsat in (s.mix.bubble_T(P, s.z), s.mix.dew_T(P, s.z)):
             if tsat == tsat and lo + 1e-6 < tsat < hi - 1e-6:
                 pts.add(float(tsat))
     T = np.array(sorted(pts))
+    f = (T - s.T_start) / (s.T_end - s.T_start)
+    Pn = s.P_start + f * (s.P_end - s.P_start)          # vectorised pressure at every table temperature
     H = np.empty_like(T)
     S = np.empty_like(T)
-    for i, t in enumerate(T):
-        st = s.mix.flash_TP(float(t), float(P_at(t)), s.z)
+    for i in range(len(T)):
+        st = s.mix.flash_TP(float(T[i]), float(Pn[i]), s.z)
         H[i], S[i] = st.H, st.S
     return T, H * s.n, S * s.n
 

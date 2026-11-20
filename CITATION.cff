@@ -1,0 +1,26 @@
+cff-version: 1.2.0
+message: "If you use this software or data, please cite it using these metadata."
+title: "lng-robust-design: engine, data and results for the price of robustness in modular LNG refrigeration"
+type: software
+authors:
+  - family-names: Fadoyeni
+    given-names: Tunji
+  - family-names: Owhonda
+    given-names: Gideon
+repository-code: "https://github.com/Gidoty/lng-robust-design"
+license: MIT
+version: "0.2.0"
+date-released: "2026-11-20"
+abstract: >-
+  Python engine for risk-averse design of single mixed refrigerant and nitrogen expander LNG cycles under variable Niger Delta
+  associated-gas composition: property layer (Peng-Robinson via thermo), cycle models, two-stage CVaR design, surrogate
+  screening with false-feasible-rate reliability, ranking-reversal and sensitivity analysis. Code is MIT-licensed, data are CC BY 4.0.
+keywords:
+  - LNG
+  - robust optimisation
+  - conditional value-at-risk
+  - nitrogen expander
+  - single mixed refrigerant
+  - Niger Delta
+license-url: "https://creativecommons.org/licenses/by/4.0/"
+# The data licence (CC BY 4.0) is stated in LICENSE-DATA. A DOI will be added when the Zenodo deposit exists.

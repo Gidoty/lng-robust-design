@@ -1,0 +1,33 @@
+         1303300 function calls (1301611 primitive calls) in 1.045 seconds
+
+   Ordered by: cumulative time
+   List reduced from 368 to 25 due to restriction <25>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.000    0.000    1.045    1.045 /home/user/work/lng/lng_robust/cycles/__init__.py:8(solve)
+        1    0.000    0.000    1.045    1.045 /home/user/work/lng/lng_robust/cycles/n2_single.py:83(solve_n2_single)
+        1    0.000    0.000    1.045    1.045 /home/user/work/lng/lng_robust/cycles/common.py:225(run_cycle)
+        1    0.000    0.000    1.045    1.045 /home/user/work/lng/lng_robust/cycles/n2_single.py:23(_body)
+  201/192    0.001    0.000    1.026    0.005 /home/user/work/venv/lib/python3.13/site-packages/thermo/flash/flash_base.py:158(flash)
+        1    0.000    0.000    0.940    0.940 /home/user/work/lng/lng_robust/units/mshe.py:92(mshe)
+        3    0.001    0.000    0.938    0.313 /home/user/work/lng/lng_robust/units/mshe.py:55(_stream_table)
+       69    0.011    0.000    0.932    0.014 /home/user/work/venv/lib/python3.13/site-packages/thermo/flash/flash_vl.py:526(stability_test_Michelsen)
+     1272    0.089    0.000    0.912    0.001 /home/user/work/venv/lib/python3.13/site-packages/thermo/flash/flash_utils.py:3919(stability_iteration_Michelsen)
+      160    0.000    0.000    0.870    0.005 /home/user/work/lng/lng_robust/props/eos.py:196(flash_TP)
+       65    0.000    0.000    0.867    0.013 /home/user/work/venv/lib/python3.13/site-packages/thermo/flash/flash_vl.py:777(flash_TPV)
+       65    0.000    0.000    0.867    0.013 /home/user/work/venv/lib/python3.13/site-packages/thermo/flash/flash_vl.py:648(flash_TP_stability_test)
+    12733    0.015    0.000    0.589    0.000 /home/user/work/venv/lib/python3.13/site-packages/thermo/phases/ceos.py:313(lnphis_at_zs)
+    12099    0.005    0.000    0.563    0.000 /home/user/work/venv/lib/python3.13/site-packages/thermo/flash/flash_vl.py:561(<lambda>)
+    12946    0.014    0.000    0.539    0.000 /home/user/work/venv/lib/python3.13/site-packages/thermo/phases/ceos.py:178(to_TP_zs)
+    13188    0.017    0.000    0.533    0.000 /home/user/work/venv/lib/python3.13/site-packages/thermo/eos_mix.py:501(to_TP_zs_fast)
+    13188    0.018    0.000    0.501    0.000 /home/user/work/venv/lib/python3.13/site-packages/thermo/eos.py:1137(solve)
+    14180    0.015    0.000    0.333    0.000 /home/user/work/venv/lib/python3.13/site-packages/thermo/eos_mix.py:1012(a_alpha_and_derivatives)
+    13188    0.305    0.000    0.306    0.000 /home/user/work/venv/lib/python3.13/site-packages/thermo/eos_mix_methods.py:558(a_alpha_and_derivatives_quadratic_terms)
+     1589    0.002    0.000    0.222    0.000 /home/user/work/venv/lib/python3.13/site-packages/chemicals/rachford_rice.py:2155(flash_inner_loop)
+     1589    0.018    0.000    0.220    0.000 /home/user/work/venv/lib/python3.13/site-packages/chemicals/rachford_rice.py:914(Rachford_Rice_solution_numpy)
+     1589    0.032    0.000    0.192    0.000 /home/user/work/venv/lib/python3.13/site-packages/fluids/numerics/__init__.py:3353(halley)
+    21368    0.097    0.000    0.154    0.000 /home/user/work/venv/lib/python3.13/site-packages/chemicals/rachford_rice.py:901(Rachford_Rice_numpy_err_fprime2)
+       17    0.000    0.000    0.142    0.008 /home/user/work/lng/lng_robust/props/eos.py:259(saturation_T)
+        4    0.000    0.000    0.141    0.035 /home/user/work/venv/lib/python3.13/site-packages/thermo/flash/flash_vl.py:441(flash_PVF)
+
+

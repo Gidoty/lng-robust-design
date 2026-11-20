@@ -17,7 +17,6 @@ iniconfig==2.3.1
 joblib==1.6.0
 jpype1==1.7.1
 kiwisolver==1.5.1
--e git+https://github.com/Gidoty/scholarship_application_intelligence_system@420d8d79f9b620c0014bf46cfa4df802a1ebff2a#egg=lng_robust&subdirectory=lng-robust-design
 matplotlib==3.11.2
 moocore==0.3.2
 multiprocess==0.70.19
@@ -29,6 +28,7 @@ pandas==3.1.1
 pillow==13.0.0
 platformdirs==4.14.7
 pluggy==1.7.0
+pyarrow==26.0.1
 pycparser==3.12
 Pygments==2.21.0
 pymoo==0.6.2

@@ -7,6 +7,8 @@ from __future__ import annotations
 
 import functools
 import math
+import os
+from collections import OrderedDict
 from dataclasses import dataclass, field
 
 import numpy as np
@@ -50,6 +52,10 @@ class use_eos:
         global _DEFAULT_EOS
         _DEFAULT_EOS = self.prev
 ZERO_TOL = 1e-12
+# Exact-key memoisation of TP flashes and saturation temperatures. A hit returns the object computed for the identical
+# (T, P, z) input, so results are bit-for-bit the same as without the cache. Set LNG_NO_FLASH_CACHE=1 to disable it.
+FLASH_CACHE_MAX = int(os.environ.get("LNG_FLASH_CACHE_MAX", "40000"))
+FLASH_CACHE_ON = os.environ.get("LNG_NO_FLASH_CACHE", "0") != "1"
 
 
 class FlashError(RuntimeError):
@@ -110,8 +116,12 @@ _REGISTRY: list = []
 
 
 def flash_count() -> int:
-    """Total number of flash calls made so far in this process (all mixtures)."""
+    """Total number of flash calls actually computed so far in this process (cache hits are not counted)."""
     return sum(m.n_flash for m in _REGISTRY)
+
+
+def cache_hit_count() -> int:
+    return sum(getattr(m, "n_cache_hits", 0) for m in _REGISTRY)
 
 
 class Mixture:
@@ -134,7 +144,10 @@ class Mixture:
         else:
             self.flasher = FlashVL(consts, corr, liquid=liq, gas=gas)
         self.MWs = list(consts.MWs)
-        self.n_flash = 0
+        self.n_flash = 0                 # TP/PH/PS flashes actually computed by the property engine
+        self.n_cache_hits = 0            # TP flashes served from the exact-key cache
+        self._tp_cache: OrderedDict = OrderedDict()
+        self._sat_cache: dict = {}
         _REGISTRY.append(self)
 
     # ---- helpers -------------------------------------------------------------------
@@ -195,6 +208,21 @@ class Mixture:
     # ---- flashes --------------------------------------------------------------------
     def flash_TP(self, T: float, P: float, z) -> State:
         z = self.vec(z)
+        if FLASH_CACHE_ON:
+            key = (float(T), float(P), tuple(z))
+            hit = self._tp_cache.get(key)
+            if hit is not None:
+                self._tp_cache.move_to_end(key)
+                self.n_cache_hits += 1
+                return hit
+            st = self._flash_TP_uncached(T, P, z)
+            self._tp_cache[key] = st
+            if len(self._tp_cache) > FLASH_CACHE_MAX:
+                self._tp_cache.popitem(last=False)
+            return st
+        return self._flash_TP_uncached(T, P, z)
+
+    def _flash_TP_uncached(self, T: float, P: float, z) -> State:
         self.n_flash += 1
         try:
             r = self.flasher.flash(T=float(T), P=float(P), zs=z)
@@ -259,11 +287,19 @@ class Mixture:
     def saturation_T(self, P: float, z, vf: float) -> float:
         """Bubble (vf=0) or dew (vf=1) temperature at pressure P [K]; nan if not defined."""
         z = self.vec(z)
+        key = (float(vf), float(P), tuple(z))
+        if FLASH_CACHE_ON and key in self._sat_cache:
+            return self._sat_cache[key]
         try:
             r = self.flasher.flash(VF=vf, P=float(P), zs=z)
-            return float(r.T)
+            out = float(r.T)
         except Exception:
-            return float("nan")
+            out = float("nan")
+        if FLASH_CACHE_ON:
+            if len(self._sat_cache) > FLASH_CACHE_MAX:
+                self._sat_cache.clear()
+            self._sat_cache[key] = out
+        return out
 
     def bubble_T(self, P, z):
         return self.saturation_T(P, z, 0.0)

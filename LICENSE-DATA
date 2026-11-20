@@ -1,0 +1,15 @@
+Creative Commons Attribution 4.0 International (CC BY 4.0)
+
+Copyright (c) 2026 Tunji Fadoyeni, Gideon Owhonda
+
+The data in this repository (lng_robust/data/*, lng_robust/runs/*.csv, lng_robust/results/*, and the results/<run_id>/ folders)
+are licensed under CC BY 4.0. You may share and adapt them for any purpose, including commercially, if you give appropriate
+credit, provide a link to the licence and indicate if changes were made.
+
+Full legal code: https://creativecommons.org/licenses/by/4.0/legalcode
+Summary:         https://creativecommons.org/licenses/by/4.0/
+
+Source data transcribed into lng_robust/data (benchmark tables and flow-station compositions) belong to their original publications;
+each file names its source and page. Cite the original work when you use those values.
+
+Code is licensed separately under the MIT licence (see LICENSE).
