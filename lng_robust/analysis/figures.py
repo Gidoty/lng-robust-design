@@ -28,29 +28,55 @@ def save(fig, out_dir: Path, name: str):
     return [f"{name}.png", f"{name}.pdf"]
 
 
-def _box(ax, xy, w, h, text, fc="#f2f2f2"):
-    ax.add_patch(FancyBboxPatch(xy, w, h, boxstyle="round,pad=0.02", fc=fc, ec="#333333", lw=0.8))
-    ax.text(xy[0] + w / 2, xy[1] + h / 2, text, ha="center", va="center", fontsize=7)
+def _box(ax, xy, w, h, text, fc="#f2f2f2", fs=6):
+    ax.add_patch(FancyBboxPatch(xy, w, h, boxstyle="round,pad=0.015", fc=fc, ec="#333333", lw=0.8))
+    ax.text(xy[0] + w / 2, xy[1] + h / 2, text, ha="center", va="center", fontsize=fs)
 
 
 def _arrow(ax, a, b):
     ax.add_patch(FancyArrowPatch(a, b, arrowstyle="-|>", mutation_scale=7, lw=0.8, color="#333333"))
 
 
+def _line(ax, pts, arrow=True):
+    xs, ys = zip(*pts)
+    ax.plot(xs[:-1] if arrow else xs, ys[:-1] if arrow else ys, color="#333333", lw=0.8, solid_capstyle="butt")
+    if arrow:
+        ax.add_patch(FancyArrowPatch(pts[-2], pts[-1], arrowstyle="-|>", mutation_scale=7, lw=0.8, color="#333333", shrinkA=0, shrinkB=0))
+
+
 def fig1_flowsheets(out):
-    fig, axes = plt.subplots(1, 3, figsize=(7.2, 2.6))
-    specs = {"(a) SMR": ["Compressor\ntrain", "Cooler", "MSHE", "JT valve"],
-             "(b) Single N$_2$ expander": ["Compressor\ntrain", "Cooler", "MSHE", "Expander"],
-             "(c) Dual N$_2$ expander": ["Compressor\ntrain", "Cooler", "MSHE", "Warm +\ncold expander"]}
-    for ax, (t, names) in zip(axes, specs.items()):
+    """Block flow diagrams: natural gas through the MSHE to the end flash; refrigerant loop compressor train, cooler, MSHE hot side,
+    expansion device, MSHE cold side back to the compressor. Schematic only (not to scale)."""
+    fig, axes = plt.subplots(1, 3, figsize=(7.4, 3.2))
+    exp_dev = {"(a) SMR": ["JT valve"], "(b) Single N$_2$ expander": ["Expander"], "(c) Dual N$_2$ expander": ["Warm\nexpander", "Cold\nexpander"]}
+    for ax, (title, dev) in zip(axes, exp_dev.items()):
         ax.set_xlim(0, 1); ax.set_ylim(0, 1); ax.axis("off")
-        pos = [(0.05, 0.62), (0.52, 0.62), (0.52, 0.30), (0.05, 0.30)]
-        for p, n in zip(pos, names):
-            _box(ax, p, 0.38, 0.2, n)
-        for a, b in (((0.43, 0.72), (0.52, 0.72)), ((0.71, 0.62), (0.71, 0.50)), ((0.52, 0.40), (0.43, 0.40)), ((0.24, 0.30), (0.24, 0.62))):
-            _arrow(ax, a, b)
-        ax.text(0.5, 0.08, "natural gas in  →  MSHE  →  LNG (end flash)", ha="center", fontsize=6)
-        ax.text(0.5, 0.95, t, ha="center", fontsize=8, weight="bold")
+        ax.text(0.5, 0.97, title, ha="center", va="top", fontsize=8, weight="bold")
+        _box(ax, (0.34, 0.22), 0.16, 0.56, "MSHE", fc="#e8eef6")
+        _box(ax, (0.60, 0.76), 0.36, 0.10, "Compressor\ntrain", fs=5.5)
+        _box(ax, (0.66, 0.54), 0.24, 0.08, "Cooler", fs=5.5)
+        if len(dev) == 1:
+            _box(ax, (0.62, 0.20), 0.30, 0.09, dev[0])
+        else:
+            _box(ax, (0.575, 0.22), 0.18, 0.12, dev[0], fs=5)
+            _box(ax, (0.785, 0.22), 0.18, 0.12, dev[1], fs=5)
+        _box(ax, (0.03, 0.10), 0.22, 0.09, "End flash", fs=5.5)
+        _line(ax, [(0.02, 0.70), (0.34, 0.70)])                                  # natural gas in
+        ax.text(0.02, 0.73, "Natural gas", fontsize=6)
+        _line(ax, [(0.34, 0.30), (0.13, 0.30), (0.13, 0.19)])                    # cold NG to end flash
+        _line(ax, [(0.13, 0.10), (0.13, 0.03)])                                  # LNG out
+        ax.text(0.16, 0.04, "LNG", fontsize=6)
+        _line(ax, [(0.50, 0.72), (0.77, 0.72), (0.77, 0.76)][:2] + [(0.62, 0.72)][:0] + [(0.62, 0.80)] if False else [(0.50, 0.74), (0.56, 0.74), (0.56, 0.81), (0.62, 0.81)])   # cold side out to compressor
+        _line(ax, [(0.78, 0.76), (0.78, 0.62)])                                  # compressor to cooler
+        _line(ax, [(0.66, 0.58), (0.58, 0.58), (0.58, 0.54), (0.50, 0.54)])     # cooler to MSHE hot side
+        if len(dev) == 1:
+            _line(ax, [(0.50, 0.34), (0.58, 0.34), (0.58, 0.245), (0.62, 0.245)])   # HP refrigerant leaves MSHE to expansion
+            _line(ax, [(0.77, 0.29), (0.77, 0.40), (0.50, 0.40)])                    # expansion to MSHE cold side
+        else:
+            _line(ax, [(0.50, 0.34), (0.54, 0.34), (0.54, 0.28), (0.575, 0.28)])
+            _line(ax, [(0.665, 0.34), (0.665, 0.44), (0.50, 0.44)])
+            _line(ax, [(0.875, 0.34), (0.875, 0.40), (0.50, 0.40)])
+        ax.text(1.0, 0.58, "refrigerant", fontsize=5, rotation=90, va="center", ha="right")
     return save(fig, out, "Figure_1")
 
 
@@ -135,11 +161,11 @@ def fig7_reversal(cells: pd.DataFrame, out):
         for _, r in cells.iterrows():
             if r.reversal:
                 ax.text(r.cell_x, r.cell_y, "R", ha="center", va="center", fontsize=9, weight="bold", color="w")
-        ax.set_xticks(range(nx)); ax.set_xticklabels([f"{v:.1f}" for v in cells.groupby("cell_x").N2_pct_mean.mean()], fontsize=6)
-        ax.set_xlabel("Nitrogen in treated feed, cell mean (mol %)")
+        ax.set_xticks(range(nx)); ax.set_xticklabels([f"{a:.2f}-{b:.2f}" for a, b in zip(cells.groupby("cell_x").N2_pct_min.min(), cells.groupby("cell_x").N2_pct_max.max())], fontsize=5, rotation=30)
+        ax.set_xlabel("Nitrogen in treated feed, cell range (mol %)")
         ax.text(0.5, 1.02, title, transform=ax.transAxes, ha="center", fontsize=7)
-    axes[0].set_yticks(range(ny)); axes[0].set_yticklabels([f"{v:.1f}" for v in cells.groupby("cell_y").C2plus_pct_mean.mean()], fontsize=6)
-    axes[0].set_ylabel("Ethane and heavier, cell mean (mol %)")
+    axes[0].set_yticks(range(ny)); axes[0].set_yticklabels([f"{a:.1f}-{b:.1f}" for a, b in zip(cells.groupby("cell_y").C2plus_pct_min.min(), cells.groupby("cell_y").C2plus_pct_max.max())], fontsize=5.5)
+    axes[0].set_ylabel("Ethane and heavier, cell range (mol %)")
     from matplotlib.patches import Patch
     axes[1].legend(handles=[Patch(color=CYCLE_COLOR[c], label=CYCLE_LABEL[c]) for c in cyc_ids] + [Patch(color="#dddddd", label="Indistinguishable"), Patch(color="#ffffff", ec="k", label="No design meets chance constraint")],
                    frameon=False, fontsize=5.5, loc="upper left", bbox_to_anchor=(1.0, 1.0))

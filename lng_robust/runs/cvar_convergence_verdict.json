@@ -1,0 +1,15 @@
+{
+  "cycle": "n2_dual",
+  "within_1pct_of_S100": {
+    "25": false,
+    "50": true
+  },
+  "smallest_S_meeting_rule": 50,
+  "S_used_in_study": 50,
+  "note": "D5 (decided by the authors) fixes S = 50 for the main run. The rule 'use the smallest S within 1 % of S = 100, else keep S = 50' keeps S = 50.",
+  "inner_solver": {
+    "method": "hybrid",
+    "max_evals": 40,
+    "n_restarts": 0
+  }
+}

@@ -54,6 +54,7 @@ def reversal_table(df: pd.DataFrame, chance: float = 0.95, indistinguishable_pct
         rev = pn != pr and pn not in ("TIE", "NONE") and pr not in ("TIE", "NONE")
         rows.append(dict(cell=int(cell), cell_x=int(g.cell_x.iloc[0]), cell_y=int(g.cell_y.iloc[0]), n_scenarios=n_scen,
                          N2_pct_mean=float(g.N2_pct.mean()), C2plus_pct_mean=float(g.C2plus_pct.mean()),
+                         N2_pct_min=float(g.N2_pct.min()), N2_pct_max=float(g.N2_pct.max()), C2plus_pct_min=float(g.C2plus_pct.min()), C2plus_pct_max=float(g.C2plus_pct.max()),
                          preferred_nominal=pn, gap_nominal_pct=pref["nominal"][1], preferred_robust=pr,
                          gap_robust_pct=pref["robust"][1], reversal=bool(rev)))
     return pd.DataFrame(rows).sort_values("cell")
