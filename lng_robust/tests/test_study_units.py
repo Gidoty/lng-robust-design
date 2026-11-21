@@ -204,5 +204,10 @@ def test_downstream_workflow_reuses_the_source_run_and_has_no_robust_search():
                     assert "github-token" in w
                 else:                                   # a download from this run must not take the source's across/reversal/sens outputs
                     assert not w["pattern"].startswith(("unit-nominal", "unit-surrogate", "unit-robust", "shards-robust"))
+    # source artifacts come from the paginating script (download-artifact lists only 100 artifacts of another run) and are required
+    fetchers = [(n, st["run"]) for n, j in jobs.items() for st in j["steps"] if "fetch_artifacts.py" in st.get("run", "")]
+    assert {n for n, _ in fetchers} == {"evalcand", "across", "reversal", "sens_model", "sens_archive", "sens_sets", "package"}
+    for n, cmd in fetchers:
+        assert "--require 'unit-nominal-" in cmd and "--require 'unit-surrogate-" in cmd, n
     text = path.read_text()
     assert "reusing run" in text and "results/${{ github.run_id }}" in text

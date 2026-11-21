@@ -75,34 +75,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.lock
           pip install -e . --no-deps
-      - uses: actions/download-artifact@v4
-        with:
-          pattern: unit-nominal-${{ matrix.cycle }}
-          path: work
-          merge-multiple: false
-          run-id: ${{ inputs.source_run_id }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions/download-artifact@v4
-        with:
-          pattern: unit-surrogate-${{ matrix.cycle }}
-          path: work
-          merge-multiple: false
-          run-id: ${{ inputs.source_run_id }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions/download-artifact@v4
-        with:
-          pattern: unit-robust-${{ matrix.cycle }}-*
-          path: work
-          merge-multiple: false
-          run-id: ${{ inputs.source_run_id }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions/download-artifact@v4
-        with:
-          pattern: shards-robust-${{ matrix.cycle }}-*
-          path: work
-          merge-multiple: false
-          run-id: ${{ inputs.source_run_id }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Fetch artifacts of the source run
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python tools/fetch_artifacts.py --run-id "$SOURCE_RUN_ID" --out work --require 'unit-nominal-${{ matrix.cycle }}' --require 'unit-surrogate-${{ matrix.cycle }}' --require 'unit-robust-${{ matrix.cycle }}-*' --optional 'shards-robust-${{ matrix.cycle }}-*'
       - name: Run unit
         run: |
           mkdir -p work
@@ -150,20 +126,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.lock
           pip install -e . --no-deps
-      - uses: actions/download-artifact@v4
-        with:
-          pattern: unit-nominal-${{ matrix.cycle }}
-          path: work
-          merge-multiple: false
-          run-id: ${{ inputs.source_run_id }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions/download-artifact@v4
-        with:
-          pattern: unit-surrogate-${{ matrix.cycle }}
-          path: work
-          merge-multiple: false
-          run-id: ${{ inputs.source_run_id }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Fetch artifacts of the source run
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python tools/fetch_artifacts.py --run-id "$SOURCE_RUN_ID" --out work --require 'unit-nominal-${{ matrix.cycle }}' --require 'unit-surrogate-${{ matrix.cycle }}' 
       - uses: actions/download-artifact@v4
         with:
           pattern: unit-evalcand-${{ matrix.cycle }}-*
@@ -217,20 +183,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.lock
           pip install -e . --no-deps
-      - uses: actions/download-artifact@v4
-        with:
-          pattern: unit-nominal-${{ matrix.cycle }}
-          path: work
-          merge-multiple: false
-          run-id: ${{ inputs.source_run_id }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions/download-artifact@v4
-        with:
-          pattern: unit-surrogate-${{ matrix.cycle }}
-          path: work
-          merge-multiple: false
-          run-id: ${{ inputs.source_run_id }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Fetch artifacts of the source run
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python tools/fetch_artifacts.py --run-id "$SOURCE_RUN_ID" --out work --require 'unit-nominal-${{ matrix.cycle }}' --require 'unit-surrogate-${{ matrix.cycle }}' 
       - uses: actions/download-artifact@v4
         with:
           pattern: unit-across-${{ matrix.cycle }}
@@ -284,27 +240,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.lock
           pip install -e . --no-deps
-      - uses: actions/download-artifact@v4
-        with:
-          pattern: unit-nominal-${{ matrix.cycle }}
-          path: work
-          merge-multiple: false
-          run-id: ${{ inputs.source_run_id }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions/download-artifact@v4
-        with:
-          pattern: unit-surrogate-${{ matrix.cycle }}
-          path: work
-          merge-multiple: false
-          run-id: ${{ inputs.source_run_id }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions/download-artifact@v4
-        with:
-          pattern: unit-robust-${{ matrix.cycle }}-*
-          path: work
-          merge-multiple: false
-          run-id: ${{ inputs.source_run_id }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Fetch artifacts of the source run
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python tools/fetch_artifacts.py --run-id "$SOURCE_RUN_ID" --out work --require 'unit-nominal-${{ matrix.cycle }}' --require 'unit-surrogate-${{ matrix.cycle }}' --require 'unit-robust-${{ matrix.cycle }}-*' 
       - uses: actions/download-artifact@v4
         with:
           pattern: unit-across-${{ matrix.cycle }}
@@ -358,27 +297,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.lock
           pip install -e . --no-deps
-      - uses: actions/download-artifact@v4
-        with:
-          pattern: unit-nominal-${{ matrix.cycle }}
-          path: work
-          merge-multiple: false
-          run-id: ${{ inputs.source_run_id }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions/download-artifact@v4
-        with:
-          pattern: unit-surrogate-${{ matrix.cycle }}
-          path: work
-          merge-multiple: false
-          run-id: ${{ inputs.source_run_id }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions/download-artifact@v4
-        with:
-          pattern: unit-robust-${{ matrix.cycle }}-*
-          path: work
-          merge-multiple: false
-          run-id: ${{ inputs.source_run_id }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Fetch artifacts of the source run
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python tools/fetch_artifacts.py --run-id "$SOURCE_RUN_ID" --out work --require 'unit-nominal-${{ matrix.cycle }}' --require 'unit-surrogate-${{ matrix.cycle }}' --require 'unit-robust-${{ matrix.cycle }}-*' 
       - uses: actions/download-artifact@v4
         with:
           pattern: unit-across-${{ matrix.cycle }}
@@ -432,27 +354,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.lock
           pip install -e . --no-deps
-      - uses: actions/download-artifact@v4
-        with:
-          pattern: unit-nominal-${{ matrix.cycle }}
-          path: work
-          merge-multiple: false
-          run-id: ${{ inputs.source_run_id }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions/download-artifact@v4
-        with:
-          pattern: unit-surrogate-${{ matrix.cycle }}
-          path: work
-          merge-multiple: false
-          run-id: ${{ inputs.source_run_id }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions/download-artifact@v4
-        with:
-          pattern: unit-robust-${{ matrix.cycle }}-*
-          path: work
-          merge-multiple: false
-          run-id: ${{ inputs.source_run_id }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Fetch artifacts of the source run
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python tools/fetch_artifacts.py --run-id "$SOURCE_RUN_ID" --out work --require 'unit-nominal-${{ matrix.cycle }}' --require 'unit-surrogate-${{ matrix.cycle }}' --require 'unit-robust-${{ matrix.cycle }}-*' 
       - uses: actions/download-artifact@v4
         with:
           pattern: unit-across-${{ matrix.cycle }}
@@ -501,34 +406,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.lock
           pip install -e . --no-deps
-      - uses: actions/download-artifact@v4
-        with:
-          pattern: unit-nominal-*
-          path: work
-          merge-multiple: false
-          run-id: ${{ inputs.source_run_id }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions/download-artifact@v4
-        with:
-          pattern: unit-surrogate-*
-          path: work
-          merge-multiple: false
-          run-id: ${{ inputs.source_run_id }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions/download-artifact@v4
-        with:
-          pattern: unit-sobol*
-          path: work
-          merge-multiple: false
-          run-id: ${{ inputs.source_run_id }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions/download-artifact@v4
-        with:
-          pattern: unit-robust-*
-          path: work
-          merge-multiple: false
-          run-id: ${{ inputs.source_run_id }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Fetch artifacts of the source run
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python tools/fetch_artifacts.py --run-id "$SOURCE_RUN_ID" --out work --require 'unit-nominal-*' --require 'unit-surrogate-*' --require 'unit-sobol*' --require 'unit-robust-*' 
       - uses: actions/download-artifact@v4
         with:
           pattern: unit-across-*

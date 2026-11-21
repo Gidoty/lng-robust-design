@@ -72,15 +72,23 @@ STEPS = """      - uses: actions/checkout@v4
 
 
 def download(pattern, source=False):
-    extra = """          run-id: ${{ inputs.source_run_id }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-""" if source else ""
     return f"""      - uses: actions/download-artifact@v4
         with:
           pattern: {pattern}
           path: work
           merge-multiple: false
-{extra}"""
+"""
+
+
+def fetch(required, optional=()):
+    """Artifacts of the source run, fetched with tools/fetch_artifacts.py (download-artifact lists only 100 artifacts of another run)."""
+    req = " ".join(f"--require '{p}'" for p in required)
+    opt = " ".join(f"--optional '{p}'" for p in optional)
+    return f"""      - name: Fetch artifacts of the source run
+        env:
+          GH_TOKEN: ${{{{ secrets.GITHUB_TOKEN }}}}
+        run: python tools/fetch_artifacts.py --run-id "$SOURCE_RUN_ID" --out work {req} {opt}
+"""
 
 
 def job(name, needs, matrix, key, cli, downloads, stage=None, parallel=20, always=False):
@@ -98,8 +106,13 @@ def job(name, needs, matrix, key, cli, downloads, stage=None, parallel=20, alway
 {mx}
     steps:
 {STEPS}"""
+    src_req = [d[0] for d in downloads if isinstance(d, tuple) and d[1] is True]
+    src_opt = [d[0] for d in downloads if isinstance(d, tuple) and d[1] == "optional"]
+    if src_req or src_opt:
+        s += fetch(src_req, src_opt)
     for d in downloads:
-        s += download(*d) if isinstance(d, tuple) else download(d)
+        if not isinstance(d, tuple):
+            s += download(d)
     s += f"""      - name: Run unit
         run: |
           mkdir -p work
@@ -174,9 +187,10 @@ def main_downstream():
     mc, mk, ms = "${{ matrix.cycle }}", "${{ matrix.case }}", "${{ matrix.slot }}"
     cyc = {"cycle": "[" + ", ".join(CYCLES) + "]"}
     src = lambda pat: (pat, True)
+    srco = lambda pat: (pat, "optional")
     base = [src(f"unit-nominal-{mc}"), src(f"unit-surrogate-{mc}")]
     out.append(job("evalcand", ["tests"], {"cycle": cyc["cycle"], "slot": "[" + ", ".join(str(i) for i in range(12)) + "]"}, f"evalcand-{mc}-{ms}",
-                   f"evalcand --cycle {mc} --case {ms}", base + [src(f"unit-robust-{mc}-*"), src(f"shards-robust-{mc}-*")]))
+                   f"evalcand --cycle {mc} --case {ms}", base + [src(f"unit-robust-{mc}-*"), srco(f"shards-robust-{mc}-*")]))
     out.append(job("across", ["evalcand"], cyc, f"across-{mc}", f"across --cycle {mc}", base + [f"unit-evalcand-{mc}-*"]))
     rv = {"cycle": cyc["cycle"], "variant": "[nominal, robust]"}
     mv = "${{ matrix.variant }}"
@@ -192,7 +206,7 @@ def main_downstream():
     runs-on: ubuntu-latest
     timeout-minutes: 120
     steps:
-""" + STEPS + download("unit-nominal-*", True) + download("unit-surrogate-*", True) + download("unit-sobol*", True) + download("unit-robust-*", True)
+""" + STEPS + fetch(["unit-nominal-*", "unit-surrogate-*", "unit-sobol*", "unit-robust-*"])
                + download("unit-across-*") + download("unit-reversal-*") + download("unit-sens-*") + """      - name: Build results package
         run: python -m lng_robust.study.package --work work --out results_package --run-id "${{ github.run_id }}" --preset "$PRESET"
       - uses: actions/upload-artifact@v4
