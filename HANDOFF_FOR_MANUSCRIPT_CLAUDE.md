@@ -2,6 +2,15 @@
 
 Paste this whole file at the start of the manuscript session. The engine session updates it whenever something changes. Read `STATUS.md` after it.
 
+## UPDATE 2026-11-21 (engine session 4, requests 12 to 19)
+
+- New results branch: **`results/44906558014`** (run https://github.com/Gidoty/lng-robust-design/actions/runs/44906558014). It replaces the across, reversal, sensitivity and package outputs of `results/44682889025`. Quote numbers from the new branch only. The robust searches and the nominal, surrogate and Sobol units are unchanged and come from run 44682889025.
+- Request 12 fixed: every nominal design is feasible at its own anchor A4. Nominal anchors feasible: SMR 5/6, single N2 2/6, dual N2 1/6; feasible fractions 0.86, 0.22, 0.14, so the nominal design still misses the 0.95 chance constraint in all three cycles.
+- Request 13 done by selection from the existing archives (no new search): `TS_selection_table.csv`. The reported `cvar_iso` and `worst_iso` designs are now the same design in each cycle. The N2 iso-UA designs now meet the chance constraint (feasible fraction 1.00). SMR `cvar_iso` and `worst_iso` chains remain partial (generation 8 and 5): state that the design is the best found within the budget, not a proven optimum.
+- New tables: `TS_failure_codes.csv`, `TS_across_per_scenario.csv`, `TS_robust_convergence.csv` (+ `Figure_S1`), `TS_selection_table.csv`, `TS_robust_chain_status.csv`; T6 has the z0 search spread columns. `PoR_scenario_mean` with interval exists for dual N2.
+- Request 18 answer: the z0 search spread (0.002 to 0.67 %) does not explain the negative iso-UA PoR_z0 of the N2 cycles (-0.26 %, -0.44 %); the column `PoR_z0_within_z0_search_spread` is False. Report it as found. The nominal CVaR of 2.0 kWh/kg is the SEC_pen value charged for infeasible scenarios.
+- Order of the older items below still applies. Items 7 (nominal feasibility) is superseded by the figures above.
+
 ## UPDATE 2026-11-20 (engine session 3)
 
 - The engine now lives in **https://github.com/Gidoty/lng-robust-design** (public; code MIT, data CC BY 4.0). The old branch `ccr-0a266400-jmatdr` of the ScholarAI repository holds a mirror of this file, `STATUS.md`, `CLAUDE.md` and `manuscript/`.
