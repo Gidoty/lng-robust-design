@@ -1,0 +1,8 @@
+archive folder: /home/runner/work/lng-robust-design/lng-robust-design/zenodo_archive
+archive zip:    lng-robust-design_zenodo_v1.0.zip
+files: 104   (nothing was uploaded)
+zip size: 44638255 bytes   sha256: a03fc611a1c3ecb4c9aef139a7634395b2ce979b5bfcf029c84653eb24392f79
+inside the zip, under 'lng-robust-design_zenodo_v1.0/': CITATION.cff (file), LICENSE (file), LICENSE-DATA (file), SHA256SUMS (file), evaluation_shards, lng-robust-design-code-70594dcda2.zip (file), results_package, zenodo.json (file)
+evaluation shards included: yes
+ 47182532                     105 files
+a03fc611a1c3ecb4c9aef139a7634395b2ce979b5bfcf029c84653eb24392f79  lng-robust-design_zenodo_v1.0.zip
