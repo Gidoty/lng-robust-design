@@ -15,7 +15,7 @@ Engine work is committed to branch `ccr-97ba1493-9mtuu0` and `main` of the new r
 | Phases 5 to 9 code | **built and tested** (section 3). Not yet producing results: see the run table below |
 | Phase 10 | LICENSE (MIT), LICENSE-DATA (CC BY 4.0), CITATION.cff, `tools/zenodo_archive.py` (does not upload) |
 | Probe runs (timing only, numbers are NOT results) | GitHub Actions run 44676187131 (all units complete), later probe runs listed in section 9 |
-| Full study | see section 9 (run IDs, branch, resume command) |
+| Full study | **finished 2026-11-21 08:32 UTC, run 44682889025, results branch `results/44682889025`. 2 of 9 robust chains are incomplete** (section 9) |
 
 Open author decisions: none of D1 to D11. The remaining ASSUMPTION values in `design_basis.yaml` are listed in section 8.
 
@@ -121,7 +121,7 @@ Measured during the full run (runner, 4 cores), against the plan:
 The nominal and sampling stages evaluate random designs that share no flash states, so they cost 1.0 to 1.3 s per evaluation, about twice the plan. The second-stage loop reuses cached states and is cheaper per evaluation.
 For the stage that decides the schedule I measured one SMR robust member at full scale on this 4-core container (S = 50 scenarios, 40 evaluations per scenario, 2,000 evaluations): **5.1 min**, against 6.1 min in the plan.
 That gives about 61 min per generation of 12 members, so the SMR chain needs 3 of the 5 chained jobs (4 generations in each of the first two jobs, 3 in the third), about 11 h of compute.
-Logs of a running job cannot be read through the API (HTTP 404), so the chain's real speed is visible only when each stage job ends (its `done.json` has `generation` and `minutes`).
+Logs of a running job cannot be read through the API (HTTP 404), so the chain's real speed is visible only when each stage job ends (its `done.json` has `generation` and `minutes`). **The SMR figure did not hold on the runner: about 12 min per member, see section 9.**
 
 ## 3. Phases 5 to 9: what the code does
 
@@ -221,7 +221,7 @@ Pinned in `requirements.lock`; every results package records them in `provenance
 | Probe 2 | 44673907933 | probe | 92da4a8 | failed: SMR nominal search found no feasible design at the tiny budget and downstream units crashed (fixed: seeded search, INCOMPLETE status instead of a crash) |
 | Probe 3 | 44676187131 | probe | 3394ead | **all units complete** (about 23 min). Branch `results/44676187131` (labelled probe, not results) |
 | Probe 4 | 44679258973 | probe | 8070278 | **all units complete** (about 30 min): five-stage chain, best-of-three z0 searches. Branch `results/44679258973` |
-| **Full study** | **44682889025** | **full** | **c92d3a0** | launched 2026-11-20 05:43 UTC. Expected end about 20 h later (critical path is the SMR robust chain, 4 chained jobs of up to 280 min, then `across` and `sens`) |
+| **Full study** | **44682889025** | **full** | **c92d3a0** | launched 2026-11-20 05:43 UTC, finished 2026-11-21 08:32 UTC (26.8 h wall), conclusion success, no failed job. Branch `results/44682889025`. **SMR `cvar_iso` and `worst_iso` chains are `partial`** |
 
 Probe packages (`results/44671744150`, `results/44673907933`, `results/44676187131`, `results/44679258973`) carry the label PROBE TIMING RUN - NOT A RESULT in the summary and in every table (the first three
 were produced before the label existed and have only the preset name in `provenance.json`). Their numbers are not results.
@@ -237,9 +237,16 @@ Resume commands (checkpoints are artifacts of the run, so a re-run job continues
 - the package alone: `python -m lng_robust.study.package --work work --out results_package --run-id 44682889025 --preset full` after `gh run download 44682889025 -p 'unit-*' -D work`.
 - if GitHub refused the workflow file: `study.yml.txt` in the repository root is a copy to paste through the web page. (Not needed: the push of `.github/workflows/study.yml` was accepted.)
 
-Runner-minutes: as of 2026-11-20 07:46 UTC the full run had used 487 runner-minutes (201 in finished jobs, 286 in jobs still running). GitHub does not bill public repositories and its usage API reports 0 ms,
-so the final figure is the sum of all job durations of run 44682889025 (Actions UI or `gh run view 44682889025 --json jobs`). The plan estimate is about 5,650 runner-minutes (section 2.5).
-The four probe runs together used roughly 450 runner-minutes (estimate from job counts, not measured).
+**Outcome of run 44682889025**
+
+- All other units are `complete`: nominal, sample, surrogate, across, reversal, sobol, sobol_pref and all 42 sensitivity cases.
+- Robust chains, generation reached (target 10, generation 0 is the initial population): single N2 all three variants 10; dual N2 all three 10; SMR `cvar_125` 10; **SMR `cvar_iso` 8 (partial)**; **SMR `worst_iso` 5 (partial)**.
+  `RESULTS_SUMMARY.md` lists every stage job that stopped early as INCOMPLETE; only the last stage of each chain matters. The real gaps are the two SMR chains above.
+- Cause: my plan used 5.1 min per SMR member, measured on this container. On the runner a 12-member generation took about 146 min, so about 12 min per member (2.4 times more), and a stage job fitted 1 to 3 generations. Five chained jobs were not enough for two of three SMR variants.
+  The robust design reported for those two chains is the best found at the last generation reached, not a finished search. Any number that depends on the SMR `cvar_iso` or `worst_iso` design (SMR rows of T5/T6 for those designs, the SMR price of robustness, SMR cells of Figure 7, SMR sensitivity cases that re-evaluate that design) must not be written up as final.
+- Other facts the authors must look at before writing (the engine does not interpret them): in T6 the iso-UA CVaR designs of the single and dual N2 cycles end with feasible fractions below the 0.95 chance constraint (see `feasible_fraction`), so the design reported is the least-violating one found; the dual-N2 nominal design is feasible in no scenario, so its scenario-mean price of robustness has no interval (NaN); the surrogate FFR near the MITA limit is large for the N2 cycles (T7).
+- Ways to finish the two SMR chains (author decision, about 12 h each of compute): (a) a new full run with a larger stage count or smaller SMR budget (population 8, or 25 inner evaluations); (b) accept generation 8 and generation 5 and state the limitation. There is no cross-run resume, so (a) restarts SMR from stage 1 unless a resume-from-artifact option is added first.
+- Runner-minutes: the usage API reports 0 for public repositories. Summing the `minutes` of every unit in `provenance.json` gives about 7,400 minutes of unit time, and about 190 jobs at roughly 2.5 minutes of set-up and transfer add about 480 more: **about 7,900 runner-minutes (about 130 h), an estimate**, against 5,650 planned. The four probe runs used roughly 450 more (estimate).
 
 ## 10. Failure handling
 

@@ -8,8 +8,8 @@ Paste this whole file at the start of the manuscript session. The engine session
 - All of your requests 1 to 9 and 11 are applied (STATUS section 1). The register is the primary source (Ebrunu and Akpoturi 2025, Tables 4 to 10), Field D is outside the main envelope,
   and kappa and the nominal anchor are recomputed: **kappa = 178.7, nominal composition = A4 (Field C)**, scenario set = 6 anchors + 44 synthetic (S = 50), seed 20260101.
   Table 4 of your draft should match `lng_robust/data/feeds.csv` (printed sums 100.01, 100.01, 100.00, 99.63, 100.76, 99.98, 99.00 for Fields A to G).
-- Phases 5 to 9 are built and tested. The full study was launched on 2026-11-20 (run 44682889025). Until its package exists there is no result for Sections 3.3 to 3.8 and none may be written.
-- Results branch: `results/44682889025` (appears when the run ends; STATUS section 9 has the run IDs and resume commands). Full study run: https://github.com/Gidoty/lng-robust-design/actions/runs/44682889025. Quote numbers only from `results/<run_id>/` (tables, `RESULTS_SUMMARY.md` with file and row for each headline number). Probe runs are timing runs; their numbers are not results.
+- Phases 5 to 9 are built and tested. The full study finished on 2026-11-21 (run 44682889025). Its package exists, **but the SMR `cvar_iso` (generation 8 of 10) and SMR `worst_iso` (generation 5 of 10) chains are incomplete**. Write nothing final that depends on those two SMR designs. Everything else is complete. Read STATUS section 9 first.
+- Results branch: `results/44682889025`. Full study run: https://github.com/Gidoty/lng-robust-design/actions/runs/44682889025. Quote numbers only from `results/<run_id>/` (tables, `RESULTS_SUMMARY.md` with file and row for each headline number). Probe runs are timing runs; their numbers are not results.
 
 ## What you may describe now, with the file as the source
 
