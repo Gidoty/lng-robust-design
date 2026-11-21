@@ -1,0 +1,109 @@
+name: finalise
+
+# Post-processing of a finished results package, then a Zenodo-ready archive (nothing is uploaded to Zenodo).
+#  1. redraws Figure_7, Figure_8 and Figure_9 and writes tables/TS_cost_screening.csv into results/<package_run_id> (a new commit on that branch);
+#     no simulation runs, no existing table changes (checked by SHA-256 in lng_robust/study/finalise.py);
+#  2. downloads the evaluation shards of the package run and builds lng-robust-design_zenodo_v1.0.zip with tools/zenodo_archive.py;
+#  3. commits the zip (split into parts of at most 90 MB if needed) to the branch archive/v1.0 so that it can be fetched with git.
+
+on:
+  workflow_dispatch:
+    inputs:
+      package_run_id:
+        description: "run whose results/<id> branch is post-processed and archived"
+        default: "44906558014"
+      source_run_id:
+        description: "run that holds the surrogate artifacts (out-of-fold predictions) used by Figure_8"
+        default: "44682889025"
+      include_shards:
+        description: "download the evaluation shards of the package run into the archive"
+        default: "true"
+        type: choice
+        options: ["true", "false"]
+
+permissions:
+  contents: write
+  actions: read
+
+env:
+  PKG_RUN: ${{ inputs.package_run_id }}
+  SOURCE_RUN_ID: ${{ inputs.source_run_id }}
+  PYTHONUNBUFFERED: "1"
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  finalise:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          ref: results/${{ inputs.package_run_id }}
+          path: pkg
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: requirements.lock
+      - name: Install pinned requirements
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.lock
+          pip install -e . --no-deps
+      - name: Tests of the figure and cost code
+        run: python -m pytest -q lng_robust/tests/test_finalise.py
+      - name: Fetch surrogate artifacts of the source run
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python tools/fetch_artifacts.py --run-id "$SOURCE_RUN_ID" --out work --require 'unit-surrogate-*'
+      - name: Redraw figures 7 to 9 and write TS_cost_screening.csv
+        run: python -m lng_robust.study.finalise --pkg "pkg/results/$PKG_RUN" --work work --code-commit "$GITHUB_SHA"
+      - name: Commit the post-processed package to results/<package_run_id>
+        run: |
+          cd pkg
+          git config user.name "github-actions"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A "results/$PKG_RUN"
+          git status --short
+          git commit -m "Redraw Figure_7, Figure_8, Figure_9 (request 20); add TS_cost_screening.csv (request 21); code commit $GITHUB_SHA"
+          git push origin "HEAD:results/$PKG_RUN"
+      - name: Fetch evaluation shards of the package run
+        if: ${{ inputs.include_shards == 'true' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python tools/fetch_artifacts.py --run-id "$PKG_RUN" --out shards --require 'shards-*'
+          du -sh shards; ls shards | wc -l
+      - name: Build the archive
+        run: |
+          SH=""
+          if [ -d shards ]; then SH="--shards-dir shards"; fi
+          python tools/zenodo_archive.py --run-id "$PKG_RUN" --results "pkg/results/$PKG_RUN" $SH --out zenodo_archive --zip lng-robust-design_zenodo_v1.0.zip | tee archive_info.txt
+          unzip -l lng-robust-design_zenodo_v1.0.zip | tail -1 | tee -a archive_info.txt
+          sha256sum lng-robust-design_zenodo_v1.0.zip | tee -a archive_info.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: zenodo-archive-${{ inputs.package_run_id }}
+          path: |
+            lng-robust-design_zenodo_v1.0.zip
+            archive_info.txt
+          retention-days: 30
+      - name: Commit the archive to branch archive/v1.0 (split in parts of at most 90 MB)
+        run: |
+          mkdir arch && cd arch
+          git init -q -b archive/v1.0
+          git config user.name "github-actions"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          split -b 90M -d -a 3 ../lng-robust-design_zenodo_v1.0.zip lng-robust-design_zenodo_v1.0.zip.part
+          cp ../archive_info.txt .
+          sha256sum lng-robust-design_zenodo_v1.0.zip.part* > PARTS_SHA256
+          printf 'Reassemble: cat lng-robust-design_zenodo_v1.0.zip.part* > lng-robust-design_zenodo_v1.0.zip\nThen compare sha256sum with archive_info.txt.\n' > README.txt
+          ls -l
+          git add -A
+          git commit -q -m "Zenodo archive of run $PKG_RUN (zip in parts; see archive_info.txt)"
+          git remote add origin "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
+          git push -f origin archive/v1.0

@@ -147,35 +147,64 @@ def fig6_sec_distribution(across: pd.DataFrame, out):
     return save(fig, out, "Figure_6")
 
 
+def _fmt_mol(v: float) -> str:
+    """Mol % with enough digits to keep neighbouring cell edges distinct (two significant figures, no trailing noise)."""
+    if v == 0:
+        return "0"
+    if abs(v) < 0.01:
+        return f"{v:.1e}".replace("e-0", "e-").replace("e+0", "e+")
+    return f"{v:.2g}" if abs(v) < 10 else f"{v:.1f}"
+
+
 def fig7_reversal(cells: pd.DataFrame, out):
-    fig, axes = plt.subplots(1, 2, figsize=(6.6, 3.0), sharey=True)
+    """Ranking-reversal cells on 4 x 4 quantile cells. Columns are labelled by the mean treated N2 of the cell column (range below),
+    rows by the mean C2+ of the cell row. The nitrogen-rich cell (largest mean N2) is outlined and annotated."""
+    fig, axes = plt.subplots(1, 2, figsize=(7.48, 3.6), sharey=True)
     cyc_ids = {"smr": 0, "n2_single": 1, "n2_dual": 2}
     from matplotlib.colors import ListedColormap
+    from matplotlib.patches import Patch, Rectangle
     cmap = ListedColormap([CYCLE_COLOR["smr"], CYCLE_COLOR["n2_single"], CYCLE_COLOR["n2_dual"], "#dddddd", "#ffffff"])
     nx, ny = int(cells.cell_x.max()) + 1, int(cells.cell_y.max()) + 1
+    w = cells.n_scenarios
+    colx = cells.groupby("cell_x").apply(lambda g: pd.Series(dict(mean=np.average(g.N2_pct_mean, weights=g.n_scenarios), lo=g.N2_pct_min.min(), hi=g.N2_pct_max.max())), include_groups=False)
+    rowy = cells.groupby("cell_y").apply(lambda g: pd.Series(dict(mean=np.average(g.C2plus_pct_mean, weights=g.n_scenarios), lo=g.C2plus_pct_min.min(), hi=g.C2plus_pct_max.max())), include_groups=False)
+    rich = cells.loc[cells.N2_pct_mean.idxmax()]
     for ax, col, title in zip(axes, ("preferred_nominal", "preferred_robust"), ("Nominal designs", "CVaR designs (iso-UA)")):
         Z = np.full((ny, nx), 4.0)
         for _, r in cells.iterrows():
             Z[int(r.cell_y), int(r.cell_x)] = cyc_ids.get(r[col], 3 if r[col] == "TIE" else 4)
         ax.imshow(Z, origin="lower", cmap=cmap, vmin=0, vmax=4, aspect="auto")
+        for k in range(nx + 1):
+            ax.axvline(k - 0.5, color="#888888", lw=0.4)
+        for k in range(ny + 1):
+            ax.axhline(k - 0.5, color="#888888", lw=0.4)
         for _, r in cells.iterrows():
             if r.reversal:
-                ax.text(r.cell_x, r.cell_y, "R", ha="center", va="center", fontsize=9, weight="bold", color="w")
-        ax.set_xticks(range(nx)); ax.set_xticklabels([f"{a:.2f}-{b:.2f}" for a, b in zip(cells.groupby("cell_x").N2_pct_min.min(), cells.groupby("cell_x").N2_pct_max.max())], fontsize=5, rotation=30)
-        ax.set_xlabel("Nitrogen in treated feed, cell range (mol %)")
-        ax.text(0.5, 1.02, title, transform=ax.transAxes, ha="center", fontsize=7)
-    axes[0].set_yticks(range(ny)); axes[0].set_yticklabels([f"{a:.1f}-{b:.1f}" for a, b in zip(cells.groupby("cell_y").C2plus_pct_min.min(), cells.groupby("cell_y").C2plus_pct_max.max())], fontsize=5.5)
-    axes[0].set_ylabel("Ethane and heavier, cell range (mol %)")
-    from matplotlib.patches import Patch
-    axes[1].legend(handles=[Patch(color=CYCLE_COLOR[c], label=CYCLE_LABEL[c]) for c in cyc_ids] + [Patch(color="#dddddd", label="Indistinguishable"), Patch(color="#ffffff", ec="k", label="No design meets chance constraint")],
-                   frameon=False, fontsize=5.5, loc="upper left", bbox_to_anchor=(1.0, 1.0))
+                ax.text(r.cell_x, r.cell_y, "R", ha="center", va="center", fontsize=10, weight="bold", color="w")
+            ax.text(r.cell_x, r.cell_y - 0.30, f"N$_2$ {_fmt_mol(r.N2_pct_mean)}\nn={int(r.n_scenarios)}", ha="center", va="center", fontsize=7, linespacing=1.15,
+                    color="#222222" if Z[int(r.cell_y), int(r.cell_x)] in (3, 4) else "w")
+        ax.add_patch(Rectangle((rich.cell_x - 0.5, rich.cell_y - 0.5), 1, 1, fill=False, ec="k", lw=1.8, zorder=5))
+        ax.set_xticks(range(nx))
+        ax.set_xticklabels([f"{_fmt_mol(colx.loc[i, 'lo'])} - {_fmt_mol(colx.loc[i, 'hi'])}" for i in range(nx)], fontsize=7, rotation=30, ha="right", rotation_mode="anchor")
+        ax.set_title(title, fontsize=8.5, pad=4)
+        ax.tick_params(axis="y", labelsize=7)
+    axes[0].set_yticks(range(ny))
+    axes[0].set_yticklabels([f"{rowy.loc[i, 'mean']:.1f}\n({rowy.loc[i, 'lo']:.1f} to {rowy.loc[i, 'hi']:.1f})" for i in range(ny)], fontsize=7)
+    axes[0].set_ylabel("Ethane and heavier: row mean (range), mol %", fontsize=8)
+    axes[1].annotate(f"nitrogen-rich cell\n(mean {rich.N2_pct_mean:.1f} mol % N$_2$)", xy=(rich.cell_x + 0.5, rich.cell_y), xycoords="data", xytext=(1.04, 0.12), textcoords="axes fraction",
+                     fontsize=7, va="center", arrowprops=dict(arrowstyle="-", lw=0.8, color="k"))
+    axes[1].legend(handles=[Patch(color=CYCLE_COLOR[c], label=CYCLE_LABEL[c]) for c in cyc_ids] + [Patch(color="#dddddd", label="Indistinguishable (within 5 %)"), Patch(fc="#ffffff", ec="k", label="No design meets chance constraint")],
+                   frameon=False, fontsize=7, loc="upper left", bbox_to_anchor=(1.04, 1.0), title="Preferred cycle", title_fontsize=7)
+    fig.subplots_adjust(left=0.12, right=0.70, bottom=0.25, top=0.9, wspace=0.08)
+    fig.text(0.41, 0.015, "Nitrogen in treated feed, column range (mol %); cell label: mean N$_2$ (mol %) and number of scenarios", ha="center", fontsize=8)
     return save(fig, out, "Figure_7")
 
 
 def fig8_surrogate(oof: dict, mita_min: float, out):
-    """oof: {cycle: DataFrame from oof_predictions.parquet}"""
+    """oof: {cycle: DataFrame from oof_predictions.parquet}. Top row: parity plots; bottom row: false-feasible rate against distance to the MITA limit.
+    Each row has its own y label; n= labels at 7 pt."""
     cyc = [c for c in oof]
-    fig, axes = plt.subplots(2, len(cyc), figsize=(2.4 * len(cyc), 4.4), squeeze=False)
+    fig, axes = plt.subplots(2, len(cyc), figsize=(7.48, 6.2), squeeze=False)
     for j, c in enumerate(cyc):
         d = oof[c]
         f = d[d.feasible & d.sec_gradient_boosting.notna()]
@@ -183,8 +212,10 @@ def fig8_surrogate(oof: dict, mita_min: float, out):
         ax.scatter(f.sec, f.sec_gradient_boosting, s=3, alpha=0.4, color=CYCLE_COLOR[c], linewidths=0)
         lim = [f.sec.min(), f.sec.max()] if len(f) else [0, 1]
         ax.plot(lim, lim, "k-", lw=0.6)
-        ax.set_xlabel("Rigorous SEC (kWh kg$^{-1}$)"); ax.set_ylabel("Surrogate SEC, withheld anchor (kWh kg$^{-1}$)" if j == 0 else "")
-        ax.text(0.04, 0.93, CYCLE_LABEL[c], transform=ax.transAxes, fontsize=7, va="top")
+        ax.set_xlabel("Rigorous SEC (kWh kg$^{-1}$)", fontsize=8)
+        ax.set_ylabel("Surrogate SEC, withheld anchor (kWh kg$^{-1}$)", fontsize=8)
+        ax.text(0.04, 0.95, CYCLE_LABEL[c], transform=ax.transAxes, fontsize=8, va="top")
+        ax.tick_params(labelsize=7.5)
         g = d[d.mita.notna() & d.feas_gradient_boosting.notna() & ~d.feasible]
         ax2 = axes[1][j]
         if len(g):
@@ -195,33 +226,52 @@ def fig8_surrogate(oof: dict, mita_min: float, out):
             rate = g.groupby(cat, observed=False).apply(lambda h: 100 * h.feas_gradient_boosting.mean() if len(h) else np.nan, include_groups=False)
             cnt = g.groupby(cat, observed=False).size()
             ax2.bar(range(len(lab)), rate.values, color=CYCLE_COLOR[c])
+            top = np.nanmax(rate.values) if np.isfinite(rate.values).any() else 1.0
             for k, (r_, n_) in enumerate(zip(rate.values, cnt.values)):
-                ax2.text(k, (0 if np.isnan(r_) else r_) + 0.5, f"n={n_}", ha="center", fontsize=5)
-            ax2.set_xticks(range(len(lab))); ax2.set_xticklabels(lab, fontsize=6)
-        ax2.set_xlabel("|MITA − MITA$_{min}$| (K)"); ax2.set_ylabel("False-feasible rate (%)" if j == 0 else "")
+                ax2.text(k, (0 if np.isnan(r_) else r_) + 0.02 * top, f"n={n_}", ha="center", va="bottom", fontsize=7, rotation=90)
+            ax2.set_ylim(0, top * 1.28)
+            ax2.set_xticks(range(len(lab))); ax2.set_xticklabels(lab, fontsize=7)
+        ax2.set_xlabel("|MITA \u2212 MITA$_{min}$| (K)", fontsize=8)
+        ax2.set_ylabel("False-feasible rate (%)", fontsize=8)
+        ax2.tick_params(axis="y", labelsize=7.5)
+    fig.subplots_adjust(left=0.09, right=0.99, bottom=0.08, top=0.98, wspace=0.42, hspace=0.34)
     return save(fig, out, "Figure_8")
 
 
-def fig9_sobol(sob: pd.DataFrame, pref: pd.DataFrame, out):
+def fig9_sobol(sob: pd.DataFrame, pref: pd.DataFrame, out, top_n: int = 8):
+    """One panel per cycle (surrogate Sobol indices of feasible-case SEC), plus one panel for the cycle-preference indices; the top_n largest
+    total-order inputs only. 190 mm wide, text 8 pt or larger."""
     cyc = [c for c in ("smr", "n2_single", "n2_dual") if c in set(sob.cycle)]
-    n = len(cyc) + (1 if len(pref) else 0)
-    fig, axes = plt.subplots(1, n, figsize=(2.8 * n, 3.3), squeeze=False)
-    for ax, c in zip(axes[0], cyc):
-        d = sob[(sob.cycle == c) & (sob.output == "SEC_surrogate")].sort_values("ST", ascending=True)
+    npan = len(cyc) + (1 if len(pref) else 0)
+    ncol = 2
+    nrow = int(np.ceil(npan / ncol))
+    fig, axes = plt.subplots(nrow, ncol, figsize=(7.48, 3.1 * nrow), squeeze=False)
+    flat = list(axes.ravel())
+    for ax, c in zip(flat, cyc):
+        d = sob[(sob.cycle == c) & (sob.output == "SEC_surrogate")].sort_values("ST", ascending=False).head(top_n).iloc[::-1]
         y = np.arange(len(d))
         ax.barh(y + 0.2, d.ST, 0.4, color=CYCLE_COLOR[c], label="Total-order")
         ax.barh(y - 0.2, d.S1, 0.4, color="#bbbbbb", label="First-order")
-        ax.set_yticks(y); ax.set_yticklabels(d.variable, fontsize=5.5)
-        ax.set_xlabel("Sobol index for SEC (-)")
-        ax.text(0.97, 0.05, CYCLE_LABEL[c], transform=ax.transAxes, ha="right", fontsize=6.5)
+        ax.set_yticks(y); ax.set_yticklabels([v.replace("_", " ") for v in d.variable], fontsize=8)
+        ax.set_xlabel("Sobol index for SEC (-)", fontsize=8)
+        ax.tick_params(axis="x", labelsize=8)
+        ax.text(0.97, 0.05, CYCLE_LABEL[c], transform=ax.transAxes, ha="right", fontsize=8.5, bbox=dict(fc="w", ec="none", pad=1.5))
     if len(pref):
+        ax = flat[len(cyc)]
         d = pref[pref.output.str.startswith("SECdiff")]
         piv = d.pivot_table(index="variable", columns="output", values="ST")
-        piv.plot.barh(ax=axes[0][-1], legend=True, fontsize=5.5, width=0.8)
-        axes[0][-1].legend(fontsize=4.5, frameon=False)
-        axes[0][-1].set_xlabel("Total-order Sobol index for cycle preference (-)")
-        axes[0][-1].set_ylabel("")
-    axes[0][0].legend(frameon=False, fontsize=6)
+        piv = piv.loc[piv.max(axis=1).sort_values(ascending=False).head(top_n).index].iloc[::-1]
+        short = {"n2_single": "single N$_2$", "n2_dual": "dual N$_2$", "smr": "SMR"}
+        piv.columns = [" minus ".join(short[x] for x in col.replace("SECdiff_", "").split("_minus_")) for col in piv.columns]
+        piv.plot.barh(ax=ax, legend=True, fontsize=8, width=0.8, color=["#E69F00", "#CC79A7", "#999999"])
+        ax.set_yticklabels([t.get_text().replace("_", " ") for t in ax.get_yticklabels()], fontsize=8)
+        ax.legend(fontsize=8, frameon=False, loc="lower right")
+        ax.set_xlabel("Total-order Sobol index for cycle preference (-)", fontsize=8)
+        ax.set_ylabel("")
+    for ax in flat[npan:]:
+        ax.set_visible(False)
+    flat[0].legend(frameon=False, fontsize=8, loc="lower right", bbox_to_anchor=(1.0, 0.16))
+    fig.subplots_adjust(left=0.2, right=0.985, bottom=0.09, top=0.985, wspace=0.62, hspace=0.38)
     return save(fig, out, "Figure_9")
 
 
