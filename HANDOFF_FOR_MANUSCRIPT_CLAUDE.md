@@ -2,6 +2,12 @@
 
 Paste this whole file at the start of the manuscript session. The engine session updates it whenever something changes. Read `STATUS.md` after it.
 
+## UPDATE 2026-11-21 (later): requests 20 and 21
+
+- `results/44906558014` now also holds the redrawn Figure_7, Figure_8, Figure_9 and `tables/TS_cost_screening.csv` (commit 242d80b, run 44929081983). `provenance.json` has a `post_processing` entry. No existing table changed.
+- `TS_cost_screening.csv` equals `manuscript/analysis/TS_cost_screening.csv` (no difference above 1e-9), so the Table 8 numbers match the package. Shaft power per scenario is not stored, so the fixed compressor/expander ratio for the nitrogen cycles stays.
+- Zenodo archive built, not uploaded: branch `archive/v1.0`, see STATUS section 9.
+
 ## UPDATE 2026-11-21 (engine session 4, requests 12 to 19)
 
 - New results branch: **`results/44906558014`** (run https://github.com/Gidoty/lng-robust-design/actions/runs/44906558014). It replaces the across, reversal, sensitivity and package outputs of `results/44682889025`. Quote numbers from the new branch only. The robust searches and the nominal, surrogate and Sobol units are unchanged and come from run 44682889025.

@@ -45,6 +45,8 @@ The package of run 44682889025 has internal contradictions. The manuscript canno
 10. Phases 5 to 10 moved to GitHub Actions: `.github/workflows/study.yml`; run IDs in STATUS section 9.
 11. Versions of thermo, NeqSim, scikit-learn, pymoo, SALib and others in STATUS section 7 and in each `provenance.json`.
 
+**Cleared by the engine on 2026-11-21: requests 20 and 21 (run 44929081983, commit 242d80b on results/44906558014). Per-scenario shaft power was not stored by the shards and is not available without a new evaluation run.**
+
 ## 20. Figure legibility before submission (manuscript session, 21 Nov 2026)
 
 Redraw from the existing results/44906558014 tables only. No new runs, no number changes.

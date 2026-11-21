@@ -10,7 +10,7 @@ Engine work is committed to branch `ccr-97ba1493-9mtuu0` and `main` of the new r
 
 | Item | State |
 |---|---|
-| Tests | **84 passed** (`python -m pytest -q`, about 35 s). Includes golden-output equivalence at 1e-9 and chunk-and-merge equivalence |
+| Tests | **89 passed** (`python -m pytest -q`, about 35 s). Includes golden-output equivalence at 1e-9 and chunk-and-merge equivalence |
 | Phases 1 to 4 | done (earlier sessions) |
 | Phases 5 to 9 code | **built and tested** (section 3). Not yet producing results: see the run table below |
 | Phase 10 | LICENSE (MIT), LICENSE-DATA (CC BY 4.0), CITATION.cff, `tools/zenodo_archive.py` (does not upload) |
@@ -247,6 +247,12 @@ Resume commands (checkpoints are artifacts of the run, so a re-run job continues
 - Requests 14 to 18: tables `TS_failure_codes.csv`, `TS_across_per_scenario.csv`, `TS_robust_convergence.csv` with `Figure_S1`, `TS_robust_chain_status.csv`; `PoR_scenario_mean` with interval for all designs including dual N2 (7 scenarios feasible for both designs); T6 columns `SEC_z0_search_min`, `SEC_z0_search_max`, `SEC_z0_search_spread_pct`, `PoR_z0_within_z0_search_spread`.
 - Facts the authors must look at (not interpreted by the engine): (1) the z0 search spread is 0.002 to 0.67 % for the iso-UA designs, so the negative iso-UA PoR_z0 of single N2 (-0.26 %) and dual N2 (-0.44 %) is larger than the spread (`PoR_z0_within_z0_search_spread` is False for every robust row). (2) SMR iso-UA PoR_z0 is +4.40 % but the scenario-mean PoR is -1.01 % (interval -2.61 to 0.45 %). (3) The nominal design stays below the chance constraint in all three cycles and its CVaR is 2.0 kWh/kg, the penalty value, because infeasible scenarios are charged SEC_pen. (4) The nominal SEC at z0 in T6 (SMR 0.372 kWh/kg) is lower than the knee SEC in T5 (0.412), because the second stage re-optimises the operating point at fixed hardware. (5) The SMR `cvar_iso` and `worst_iso` chains are still partial (generations 8 and 5); the selected SMR iso-UA design is the best found within the existing archives, not a finished search.
 - Runner-minutes of this run: the usage API reports 0 for public repositories and I did not sum the job durations. Wall time was about 2.5 h on up to 20 parallel jobs.
+
+**Finalise run 44929081983 (requests 20 and 21, 2026-11-21)**
+
+- Workflow `finalise.yml`, code commit 70594dc. Added a commit to `results/44906558014` (242d80b): Figure_7, Figure_8 and Figure_9 redrawn (PNG 600 dpi and PDF), `tables/TS_cost_screening.csv` added, `provenance.json` key `post_processing` records the code commit, the inputs and that no earlier table changed (SHA-256 of every earlier table checked before and after). No simulation was run.
+- Cost screening: `lng_robust/analysis/cost_screening.py` (calculation unchanged from `manuscript/analysis/cost_screening.py`). Output equals the manuscript copy: 81 rows, 23 columns, no numeric difference above 1e-9. Per-scenario compressor and expander shaft power are not stored by the evaluation shards, so they are not in the package (adding them needs a new evaluation run).
+- Zenodo archive (not uploaded): `lng-robust-design_zenodo_v1.0.zip`, 44,638,255 bytes, SHA-256 a03fc611a1c3ecb4c9aef139a7634395b2ce979b5bfcf029c84653eb24392f79, on branch `archive/v1.0` of the repository. It holds the code at commit 70594dc, `results_package/`, and `evaluation_shards/` (59 shard artifacts of run 44906558014; the shards of the robust search in run 44682889025 are not included).
 
 **Outcome of run 44682889025**
 
