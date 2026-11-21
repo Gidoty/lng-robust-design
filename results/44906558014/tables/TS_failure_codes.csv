@@ -1,0 +1,11 @@
+cycle,design,group,failure_code,n
+smr,nominal,anchor,UA_EXCEEDED,1
+smr,nominal,synthetic,UA_EXCEEDED,6
+n2_single,nominal,anchor,RATED_FLOW_EXCEEDED,2
+n2_single,nominal,anchor,UA_EXCEEDED,2
+n2_single,nominal,synthetic,RATED_FLOW_EXCEEDED,20
+n2_single,nominal,synthetic,UA_EXCEEDED,15
+n2_dual,nominal,anchor,UA_EXCEEDED,5
+n2_dual,nominal,synthetic,LIQUID_AT_EXPANDER,3
+n2_dual,nominal,synthetic,RATED_FLOW_EXCEEDED,4
+n2_dual,nominal,synthetic,UA_EXCEEDED,31

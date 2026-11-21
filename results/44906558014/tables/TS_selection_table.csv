@@ -1,0 +1,24 @@
+cycle,candidate,origin,pools,archived_CVaR,archived_worst,archived_feasible_fraction,archived_generation,reeval_CVaR,reeval_worst,reeval_feasible_fraction,chance_met,selected_for
+smr,nominal,nominal design (NSGA-II knee),"125,iso",,,,,2.0,2.0,0.86,False,
+smr,c01,reported by chain cvar_iso (generation 8),"125,iso",0.4881620135316583,0.5008195192122141,1.0,5.0,0.4815687875135954,0.4948755166400964,1.0,True,
+smr,c02,"reported by chain cvar_125 (generation 10); top archived CVaR, 1.25 pool (cvar_125 g9 m14)",125,0.4539111612108744,0.4611996096312233,1.0,9.0,0.45267436174956155,0.4611996096312233,1.0,True,cvar_125
+smr,c03,"reported by chain worst_iso (generation 5); top archived CVaR, iso-UA pool (worst_iso g5 m0); top archived worst case, iso-UA pool (worst_iso g5 m0)","125,iso",0.47321679603622546,0.4855891357391341,1.0,5.0,0.47316610258900127,0.4855411795894041,1.0,True,"cvar_iso,worst_iso"
+smr,c04,"top archived CVaR, iso-UA pool (worst_iso g5 m4); top archived worst case, iso-UA pool (worst_iso g5 m4)","125,iso",0.4759572043790525,0.4880059984739628,1.0,5.0,0.47506961024676886,0.4880059984739628,1.0,True,
+smr,c05,"top archived CVaR, iso-UA pool (worst_iso g3 m11)","125,iso",0.47826695318302526,0.492227303734555,1.0,3.0,0.47725711119792447,0.4898673812452836,1.0,True,
+smr,c06,"top archived CVaR, 1.25 pool (cvar_125 g10 m30)",125,0.458658651985011,0.469617476129705,1.0,10.0,0.45704143937943237,0.46529990084412803,1.0,True,
+smr,c07,"top archived CVaR, 1.25 pool (cvar_125 g6 m10)",125,0.45970380298514313,0.4656192093128702,1.0,6.0,0.45636252754703444,0.46243670445000284,1.0,True,
+n2_single,nominal,nominal design (NSGA-II knee),"125,iso",,,,,2.0,2.0,0.22,False,
+n2_single,c01,"reported by chain cvar_iso (generation 10); top archived CVaR, iso-UA pool (cvar_iso g10 m84)","125,iso",1.1853287147036156,1.2244502312849426,1.0,10.0,1.1853287147036156,1.2244502312849426,1.0,True,
+n2_single,c02,"reported by chain cvar_125 (generation 10); top archived CVaR, 1.25 pool (cvar_125 g3 m40)",125,0.9928263849299646,1.0114925034440736,1.0,3.0,0.9928258618166949,1.0114925034440736,1.0,True,cvar_125
+n2_single,c03,"reported by chain worst_iso (generation 10); top archived CVaR, iso-UA pool (worst_iso g10 m83); top archived worst case, iso-UA pool (worst_iso g10 m83)","125,iso",1.1853279504904037,1.2244502068628755,1.0,10.0,1.1853279504904037,1.2244502068628755,1.0,True,"cvar_iso,worst_iso"
+n2_single,c04,"top archived CVaR, iso-UA pool (cvar_iso g10 m85)","125,iso",1.1853287147036156,1.2244502312849426,1.0,10.0,1.1853287147036156,1.2244502312849426,1.0,True,
+n2_single,c05,"top archived worst case, iso-UA pool (worst_iso g7 m36)","125,iso",1.1854354379434362,1.2244502141063478,1.0,7.0,1.1854354265006317,1.2244502141063478,1.0,True,
+n2_single,c06,"top archived CVaR, 1.25 pool (cvar_125 g4 m59)",125,0.992832541962139,1.011496909975463,1.0,4.0,0.9928323831492187,1.011496909975463,1.0,True,
+n2_single,c07,"top archived CVaR, 1.25 pool (cvar_125 g7 m88)",125,0.9928364515765138,1.01149276542145,1.0,7.0,0.992835639615392,1.01149276542145,1.0,True,
+n2_dual,nominal,nominal design (NSGA-II knee),"125,iso",,,,,2.0,2.0,0.14,False,
+n2_dual,c01,"reported by chain cvar_iso (generation 10); top archived CVaR, iso-UA pool (cvar_iso g2 m34); top archived worst case, iso-UA pool (cvar_iso g2 m34)","125,iso",0.9208812214675087,0.9347995316253119,1.0,2.0,0.9208512647196844,0.9346497497794376,1.0,True,"cvar_iso,worst_iso"
+n2_dual,c02,"reported by chain cvar_125 (generation 10); top archived CVaR, 1.25 pool (cvar_125 g3 m40)",125,0.8470211862778407,0.8559312163729529,1.0,3.0,0.8410465946651389,0.8528411007296635,1.0,True,
+n2_dual,c03,"reported by chain worst_iso (generation 10); top archived CVaR, iso-UA pool (worst_iso g9 m41)","125,iso",0.9214524217302283,0.9386191096037246,1.0,9.0,0.9213753641419133,0.9382338216621493,1.0,True,
+n2_dual,c04,"top archived CVaR, iso-UA pool (cvar_iso g2 m33); top archived worst case, iso-UA pool (cvar_iso g2 m33)","125,iso",0.9209609583047779,0.9349347581729844,1.0,2.0,0.9208812211224084,0.9347995316253119,1.0,True,
+n2_dual,c05,"top archived CVaR, 1.25 pool (cvar_125 g6 m9)",125,0.852850199333153,0.8834928078088724,1.0,6.0,0.8379264284956435,0.8456784638123733,1.0,True,cvar_125
+n2_dual,c06,"top archived CVaR, 1.25 pool (cvar_125 g6 m8)",125,0.852850266326938,0.8834928078088724,1.0,6.0,0.8379264302311723,0.8456784724900175,1.0,True,

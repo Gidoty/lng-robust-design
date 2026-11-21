@@ -1,0 +1,93 @@
+cycle,variant,generation,best_feasible_objective,best_constraint_violation,n_feasible_in_population,objective,unit
+smr,cvar_iso,0,0.516206646328524,0.0,4,CVaR 0.9,kWh/kg
+smr,cvar_iso,1,0.4936943304330784,0.0,12,CVaR 0.9,kWh/kg
+smr,cvar_iso,2,0.4936943304330784,0.0,12,CVaR 0.9,kWh/kg
+smr,cvar_iso,3,0.4876394178649288,0.0,12,CVaR 0.9,kWh/kg
+smr,cvar_iso,4,0.48484157991039917,0.0,12,CVaR 0.9,kWh/kg
+smr,cvar_iso,5,0.48484157991039917,0.0,12,CVaR 0.9,kWh/kg
+smr,cvar_iso,6,0.48484157991039917,0.0,12,CVaR 0.9,kWh/kg
+smr,cvar_iso,7,0.482000907623344,0.0,12,CVaR 0.9,kWh/kg
+smr,cvar_iso,8,0.482000907623344,0.0,12,CVaR 0.9,kWh/kg
+smr,cvar_125,0,0.4907432471566193,0.0,5,CVaR 0.9,kWh/kg
+smr,cvar_125,1,0.4907432471566193,0.0,12,CVaR 0.9,kWh/kg
+smr,cvar_125,2,0.46858150430948176,0.0,12,CVaR 0.9,kWh/kg
+smr,cvar_125,3,0.4635532974754727,0.0,12,CVaR 0.9,kWh/kg
+smr,cvar_125,4,0.4635532974754727,0.0,12,CVaR 0.9,kWh/kg
+smr,cvar_125,5,0.46141263519340775,0.0,12,CVaR 0.9,kWh/kg
+smr,cvar_125,6,0.45970380298514313,0.0,12,CVaR 0.9,kWh/kg
+smr,cvar_125,7,0.45970380298514313,0.0,12,CVaR 0.9,kWh/kg
+smr,cvar_125,8,0.45970380298514313,0.0,12,CVaR 0.9,kWh/kg
+smr,cvar_125,9,0.4539111612108744,0.0,12,CVaR 0.9,kWh/kg
+smr,cvar_125,10,0.4539111612108744,0.0,12,CVaR 0.9,kWh/kg
+smr,worst_iso,0,0.5536404595632658,0.0,4,worst case SEC,kWh/kg
+smr,worst_iso,1,0.508013254026023,0.0,12,worst case SEC,kWh/kg
+smr,worst_iso,2,0.50240248205741,0.0,12,worst case SEC,kWh/kg
+smr,worst_iso,3,0.492227303734555,0.0,12,worst case SEC,kWh/kg
+smr,worst_iso,4,0.492227303734555,0.0,12,worst case SEC,kWh/kg
+smr,worst_iso,5,0.4855891357391341,0.0,12,worst case SEC,kWh/kg
+n2_single,cvar_iso,0,,0.11007025125014945,0,CVaR 0.9,kWh/kg
+n2_single,cvar_iso,1,1.1994017426245436,0.0,3,CVaR 0.9,kWh/kg
+n2_single,cvar_iso,2,1.1853335391462916,0.0,10,CVaR 0.9,kWh/kg
+n2_single,cvar_iso,3,1.1853335391462916,0.0,12,CVaR 0.9,kWh/kg
+n2_single,cvar_iso,4,1.1853335391462916,0.0,12,CVaR 0.9,kWh/kg
+n2_single,cvar_iso,5,1.1853335391462916,0.0,12,CVaR 0.9,kWh/kg
+n2_single,cvar_iso,6,1.1853335391462916,0.0,12,CVaR 0.9,kWh/kg
+n2_single,cvar_iso,7,1.1853335391462916,0.0,12,CVaR 0.9,kWh/kg
+n2_single,cvar_iso,8,1.1853335391462916,0.0,12,CVaR 0.9,kWh/kg
+n2_single,cvar_iso,9,1.1853335391462916,0.0,12,CVaR 0.9,kWh/kg
+n2_single,cvar_iso,10,1.1853287147036156,0.0,12,CVaR 0.9,kWh/kg
+n2_single,cvar_125,0,1.2838444166562435,0.0,1,CVaR 0.9,kWh/kg
+n2_single,cvar_125,1,0.9939038358111896,0.0,7,CVaR 0.9,kWh/kg
+n2_single,cvar_125,2,0.9939038358111896,0.0,12,CVaR 0.9,kWh/kg
+n2_single,cvar_125,3,0.9928263849299646,0.0,12,CVaR 0.9,kWh/kg
+n2_single,cvar_125,4,0.9928263849299646,0.0,12,CVaR 0.9,kWh/kg
+n2_single,cvar_125,5,0.9928263849299646,0.0,12,CVaR 0.9,kWh/kg
+n2_single,cvar_125,6,0.9928263849299646,0.0,12,CVaR 0.9,kWh/kg
+n2_single,cvar_125,7,0.9928263849299646,0.0,12,CVaR 0.9,kWh/kg
+n2_single,cvar_125,8,0.9928263849299646,0.0,12,CVaR 0.9,kWh/kg
+n2_single,cvar_125,9,0.9928263849299646,0.0,12,CVaR 0.9,kWh/kg
+n2_single,cvar_125,10,0.9928263849299646,0.0,12,CVaR 0.9,kWh/kg
+n2_single,worst_iso,0,,0.11007025125014945,0,worst case SEC,kWh/kg
+n2_single,worst_iso,1,1.2254131979839933,0.0,3,worst case SEC,kWh/kg
+n2_single,worst_iso,2,1.2244502327619722,0.0,10,worst case SEC,kWh/kg
+n2_single,worst_iso,3,1.2244502207816488,0.0,12,worst case SEC,kWh/kg
+n2_single,worst_iso,4,1.2244502183057886,0.0,12,worst case SEC,kWh/kg
+n2_single,worst_iso,5,1.2244502182599277,0.0,12,worst case SEC,kWh/kg
+n2_single,worst_iso,6,1.2244502182599277,0.0,12,worst case SEC,kWh/kg
+n2_single,worst_iso,7,1.2244502141063478,0.0,12,worst case SEC,kWh/kg
+n2_single,worst_iso,8,1.2244502141063478,0.0,12,worst case SEC,kWh/kg
+n2_single,worst_iso,9,1.2244502141063478,0.0,12,worst case SEC,kWh/kg
+n2_single,worst_iso,10,1.2244502068628755,0.0,12,worst case SEC,kWh/kg
+n2_dual,cvar_iso,0,1.3221455679996634,0.0,1,CVaR 0.9,kWh/kg
+n2_dual,cvar_iso,1,0.9224338191470125,0.0,7,CVaR 0.9,kWh/kg
+n2_dual,cvar_iso,2,0.9208812214675087,0.0,12,CVaR 0.9,kWh/kg
+n2_dual,cvar_iso,3,0.9208812214675087,0.0,12,CVaR 0.9,kWh/kg
+n2_dual,cvar_iso,4,0.9208812214675087,0.0,12,CVaR 0.9,kWh/kg
+n2_dual,cvar_iso,5,0.9208812214675087,0.0,12,CVaR 0.9,kWh/kg
+n2_dual,cvar_iso,6,0.9208812214675087,0.0,12,CVaR 0.9,kWh/kg
+n2_dual,cvar_iso,7,0.9208812214675087,0.0,12,CVaR 0.9,kWh/kg
+n2_dual,cvar_iso,8,0.9208812214675087,0.0,12,CVaR 0.9,kWh/kg
+n2_dual,cvar_iso,9,0.9208812214675087,0.0,12,CVaR 0.9,kWh/kg
+n2_dual,cvar_iso,10,0.9208812214675087,0.0,12,CVaR 0.9,kWh/kg
+n2_dual,cvar_125,0,1.0372020054211715,0.0,1,CVaR 0.9,kWh/kg
+n2_dual,cvar_125,1,0.9208624825300253,0.0,7,CVaR 0.9,kWh/kg
+n2_dual,cvar_125,2,0.8699442820316631,0.0,12,CVaR 0.9,kWh/kg
+n2_dual,cvar_125,3,0.8470211862778407,0.0,12,CVaR 0.9,kWh/kg
+n2_dual,cvar_125,4,0.8470211862778407,0.0,12,CVaR 0.9,kWh/kg
+n2_dual,cvar_125,5,0.8470211862778407,0.0,12,CVaR 0.9,kWh/kg
+n2_dual,cvar_125,6,0.8470211862778407,0.0,12,CVaR 0.9,kWh/kg
+n2_dual,cvar_125,7,0.8470211862778407,0.0,12,CVaR 0.9,kWh/kg
+n2_dual,cvar_125,8,0.8470211862778407,0.0,12,CVaR 0.9,kWh/kg
+n2_dual,cvar_125,9,0.8470211862778407,0.0,12,CVaR 0.9,kWh/kg
+n2_dual,cvar_125,10,0.8470211862778407,0.0,12,CVaR 0.9,kWh/kg
+n2_dual,worst_iso,0,1.5668331566438871,0.0,1,worst case SEC,kWh/kg
+n2_dual,worst_iso,1,0.9390465446437258,0.0,7,worst case SEC,kWh/kg
+n2_dual,worst_iso,2,0.9390465446437258,0.0,12,worst case SEC,kWh/kg
+n2_dual,worst_iso,3,0.9390465446437258,0.0,12,worst case SEC,kWh/kg
+n2_dual,worst_iso,4,0.9390465446437258,0.0,12,worst case SEC,kWh/kg
+n2_dual,worst_iso,5,0.9390465446437258,0.0,12,worst case SEC,kWh/kg
+n2_dual,worst_iso,6,0.9390465446437258,0.0,12,worst case SEC,kWh/kg
+n2_dual,worst_iso,7,0.9390465446437258,0.0,12,worst case SEC,kWh/kg
+n2_dual,worst_iso,8,0.9390465446437258,0.0,12,worst case SEC,kWh/kg
+n2_dual,worst_iso,9,0.9386191096037246,0.0,12,worst case SEC,kWh/kg
+n2_dual,worst_iso,10,0.9386191096037246,0.0,12,worst case SEC,kWh/kg
