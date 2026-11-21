@@ -44,3 +44,12 @@ The package of run 44682889025 has internal contradictions. The manuscript canno
 9. Printed component sums, renormalisation and the Field E secondary-value sensitivity row (`A6S`).
 10. Phases 5 to 10 moved to GitHub Actions: `.github/workflows/study.yml`; run IDs in STATUS section 9.
 11. Versions of thermo, NeqSim, scikit-learn, pymoo, SALib and others in STATUS section 7 and in each `provenance.json`.
+
+## 20. Figure legibility before submission (manuscript session, 21 Nov 2026)
+
+Redraw from the existing results/44906558014 tables only. No new runs, no number changes.
+
+- Figure_7 (ranking reversal): the nitrogen quantile edges print as "0.00-0.00", "0.00-0.09". Print edges with enough decimals to be distinct (or label cells by their mean N2 and C2+ mol%), and mark the nitrogen-rich cell (mean 10.3 mol% N2). Keep the "no design meets chance constraint" cell.
+- Figure_8: the shared y-axis label of the parity plots overlaps the lower panels; give each row its own label and enlarge the n= annotations.
+- Figure_9: tick labels and panel titles overlap ("SMR", "Single N2 expander" sit on the axis). Use one panel per cycle with at least 8 pt text at 190 mm width; show the 8 largest inputs only.
+- Re-export PNG (600 dpi) and PDF to a new results branch or the same package, and record the commit in provenance.json.
