@@ -1050,5 +1050,48 @@
       "minutes": 6.321861596902211,
       "n_train": 10000
     }
+  ],
+  "post_processing": [
+    {
+      "step": "request 20 (Figure_7, Figure_8, Figure_9 redrawn) and request 21 (TS_cost_screening.csv)",
+      "code_commit": "70594dcda2f15206c9b73ff7a727a708f499e426",
+      "date_utc": "2026-11-21T17:16:51+00:00",
+      "figures_rewritten": [
+        "Figure_7.png",
+        "Figure_7.pdf",
+        "Figure_8.png",
+        "Figure_8.pdf",
+        "Figure_9.png",
+        "Figure_9.pdf"
+      ],
+      "tables_added": [
+        "TS_cost_screening.csv"
+      ],
+      "existing_tables_unchanged": [
+        "T3_benchmark_reproduction.csv",
+        "T4_feed_compositions.csv",
+        "T5_nominal_designs.csv",
+        "T6_nominal_cvar_worst_designs.csv",
+        "T7_surrogate_performance.csv",
+        "TS_across_per_scenario.csv",
+        "TS_failure_codes.csv",
+        "TS_oat_confirmation.csv",
+        "TS_ranking_reversal_cells.csv",
+        "TS_robust_chain_status.csv",
+        "TS_robust_convergence.csv",
+        "TS_selection_table.csv",
+        "TS_sensitivity_cases.csv",
+        "TS_sobol_indices.csv",
+        "TS_sobol_preference.csv",
+        "TS_surrogate_vs_rigorous_at_optima.csv"
+      ],
+      "inputs": {
+        "Figure_7": "tables/TS_ranking_reversal_cells.csv",
+        "Figure_9": "tables/TS_sobol_indices.csv, tables/TS_sobol_preference.csv",
+        "Figure_8": "surrogate out-of-fold predictions (unit-surrogate-<cycle>/oof_predictions.parquet of run 44682889025)",
+        "TS_cost_screening": "tables/T5_nominal_designs.csv, T6_nominal_cvar_worst_designs.csv, TS_across_per_scenario.csv; correlations and assumptions in the script header"
+      },
+      "note": "no simulation was run and no number in an existing table changed (SHA-256 of every earlier table checked before and after)"
+    }
   ]
 }

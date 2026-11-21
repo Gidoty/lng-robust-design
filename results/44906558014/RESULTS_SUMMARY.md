@@ -216,3 +216,8 @@ Run `44906558014`, preset `full`, commit `54e0542a65`. Every number below is rea
 Tables: T3_benchmark_reproduction.csv, T4_feed_compositions.csv, T5_nominal_designs.csv, T6_nominal_cvar_worst_designs.csv, T7_surrogate_performance.csv, TS_across_per_scenario.csv, TS_failure_codes.csv, TS_oat_confirmation.csv, TS_ranking_reversal_cells.csv, TS_robust_chain_status.csv, TS_robust_convergence.csv, TS_selection_table.csv, TS_sensitivity_cases.csv, TS_sobol_indices.csv, TS_sobol_preference.csv, TS_surrogate_vs_rigorous_at_optima.csv
 
 Figures: Figure_1.pdf, Figure_1.png, Figure_2.pdf, Figure_2.png, Figure_3.pdf, Figure_3.png, Figure_4.pdf, Figure_4.png, Figure_5.pdf, Figure_5.png, Figure_6.pdf, Figure_6.png, Figure_7.pdf, Figure_7.png, Figure_8.pdf, Figure_8.png, Figure_9.pdf, Figure_9.png, Figure_S1.pdf, Figure_S1.png
+## Post-processing (code commit `70594dcda2`)
+
+- Figure_7, Figure_8 and Figure_9 were redrawn from this package's tables (Figure_8: surrogate out-of-fold predictions); no number changed.
+- `tables/TS_cost_screening.csv` was added (screening-level purchased-equipment and annualised cost; U and electricity price are illustrative assumptions, see `lng_robust/analysis/cost_screening.py`).
+- Per-scenario compressor and expander shaft power are not stored by the evaluation shards, so they are not in this package.
