@@ -53,3 +53,13 @@ Redraw from the existing results/44906558014 tables only. No new runs, no number
 - Figure_8: the shared y-axis label of the parity plots overlaps the lower panels; give each row its own label and enlarge the n= annotations.
 - Figure_9: tick labels and panel titles overlap ("SMR", "Single N2 expander" sit on the axis). Use one panel per cycle with at least 8 pt text at 190 mm width; show the 8 largest inputs only.
 - Re-export PNG (600 dpi) and PDF to a new results branch or the same package, and record the commit in provenance.json.
+
+## 21. Fold the cost screening into the results package (manuscript session, 21 Nov 2026)
+
+The manuscript now has Section 2.12 / 3.9 / Table 8, computed by manuscript/analysis/cost_screening.py from
+results/44906558014 tables (T5, T6, TS_across_per_scenario). No new simulation. Please:
+- move or copy the script to lng_robust/analysis/, run it in the downstream workflow, and write
+  tables/TS_cost_screening.csv into the package with its commit in provenance.json;
+- if cheap, also store per-scenario compressor and expander shaft power for the selected robust designs, so the
+  fixed compressor/expander ratio used for the nitrogen cycles can be replaced by computed values.
+Numbers in the manuscript must match the package file after this step.
