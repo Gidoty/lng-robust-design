@@ -1,0 +1,10 @@
+label,value,unit,source_file,source_row,source_column
+PROBE TIMING RUN - NOT A RESULT,1,generation (target 10),tables/TS_robust_chain_status.csv,"cycle=smr, variant=cvar_iso",generation_reached
+PROBE TIMING RUN - NOT A RESULT,1,generation (target 10),tables/TS_robust_chain_status.csv,"cycle=smr, variant=cvar_125",generation_reached
+PROBE TIMING RUN - NOT A RESULT,1,generation (target 10),tables/TS_robust_chain_status.csv,"cycle=smr, variant=worst_iso",generation_reached
+PROBE TIMING RUN - NOT A RESULT,1,generation (target 10),tables/TS_robust_chain_status.csv,"cycle=n2_single, variant=cvar_iso",generation_reached
+PROBE TIMING RUN - NOT A RESULT,1,generation (target 10),tables/TS_robust_chain_status.csv,"cycle=n2_single, variant=cvar_125",generation_reached
+PROBE TIMING RUN - NOT A RESULT,1,generation (target 10),tables/TS_robust_chain_status.csv,"cycle=n2_single, variant=worst_iso",generation_reached
+PROBE TIMING RUN - NOT A RESULT,1,generation (target 10),tables/TS_robust_chain_status.csv,"cycle=n2_dual, variant=cvar_iso",generation_reached
+PROBE TIMING RUN - NOT A RESULT,1,generation (target 10),tables/TS_robust_chain_status.csv,"cycle=n2_dual, variant=cvar_125",generation_reached
+PROBE TIMING RUN - NOT A RESULT,1,generation (target 10),tables/TS_robust_chain_status.csv,"cycle=n2_dual, variant=worst_iso",generation_reached
