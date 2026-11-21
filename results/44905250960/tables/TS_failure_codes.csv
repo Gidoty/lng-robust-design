@@ -1,0 +1,7 @@
+cycle,design,group,failure_code,n,label
+n2_single,nominal,anchor,LIQUID_AT_EXPANDER,1,PROBE TIMING RUN - NOT A RESULT
+n2_single,nominal,anchor,RATED_FLOW_EXCEEDED,2,PROBE TIMING RUN - NOT A RESULT
+n2_dual,cvar_125,anchor,UA_EXCEEDED,1,PROBE TIMING RUN - NOT A RESULT
+n2_dual,cvar_iso,anchor,UA_EXCEEDED,3,PROBE TIMING RUN - NOT A RESULT
+n2_dual,nominal,anchor,UA_EXCEEDED,3,PROBE TIMING RUN - NOT A RESULT
+n2_dual,worst_iso,anchor,UA_EXCEEDED,3,PROBE TIMING RUN - NOT A RESULT

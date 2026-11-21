@@ -1,0 +1,1 @@
+This package comes from the probe preset. It measures time per evaluation and checks the plumbing. No number in it is a result, a finding or a benchmark. Do not quote it.

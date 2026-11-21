@@ -1,0 +1,10 @@
+cycle,variant,generation_reached,target_generations,status,chance_met_at_end,label
+smr,cvar_iso,1,1,complete,True,PROBE TIMING RUN - NOT A RESULT
+smr,cvar_125,1,1,complete,True,PROBE TIMING RUN - NOT A RESULT
+smr,worst_iso,1,1,complete,True,PROBE TIMING RUN - NOT A RESULT
+n2_single,cvar_iso,1,1,complete,True,PROBE TIMING RUN - NOT A RESULT
+n2_single,cvar_125,1,1,complete,True,PROBE TIMING RUN - NOT A RESULT
+n2_single,worst_iso,1,1,complete,True,PROBE TIMING RUN - NOT A RESULT
+n2_dual,cvar_iso,1,1,complete,False,PROBE TIMING RUN - NOT A RESULT
+n2_dual,cvar_125,1,1,complete,False,PROBE TIMING RUN - NOT A RESULT
+n2_dual,worst_iso,1,1,complete,False,PROBE TIMING RUN - NOT A RESULT

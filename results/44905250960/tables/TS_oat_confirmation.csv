@@ -1,0 +1,4 @@
+cycle,spearman_oat_vs_ST,top2_sobol_ST,top2_oat,top2_agree,box_fraction_of_range,n_variables_with_two_feasible_points,label
+smr,-0.7999999999999999,"['T_lng_C', 'w_N2']","['P_low_bar', 'flow_ratio']",False,0.15,4,PROBE TIMING RUN - NOT A RESULT
+n2_single,0.09999999999999999,"['alr_C3', 'flow_ratio']","['P_low_bar', 'flow_ratio']",False,0.15,5,PROBE TIMING RUN - NOT A RESULT
+n2_dual,0.03571428571428572,"['P_low_bar', 'T_exp_in_cold_C']","['P_low_bar', 'flow_ratio']",False,0.15,7,PROBE TIMING RUN - NOT A RESULT
