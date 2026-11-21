@@ -237,8 +237,13 @@ def _stage1_of(cycle, vec_or_nom, from_nominal: bool, nom=None):
 
 
 def design_table(ctx, cycle, basis):
-    """{design name: x1} for the nominal design and every available robust variant."""
+    """{design name: x1} for the nominal design and the reported robust designs. After the request-13 selection the designs come from
+    unit-across-<cycle>/selected_designs.json; otherwise from the final design of each robust chain."""
     nom = load_nominal(ctx, cycle)
+    p = ctx.input("across", cycle) / "selected_designs.json"
+    if p.exists():
+        sel = json.loads(p.read_text())
+        return {k: v["x1"] for k, v in sel.items()}, nom
     d = {"nominal": _stage1_of(cycle, None, True, nom)}
     for v in VARIANTS:
         fin = load_final(ctx, cycle, v)
@@ -247,29 +252,54 @@ def design_table(ctx, cycle, basis):
     return d, nom
 
 
-def eval_designs_on_set(ctx, cycle, designs: dict, scen, basis, nom, kw, tag, sink, starts_models=None):
-    """Second stage re-optimised for every scenario for each design. Returns {design: DesignEval}."""
+def known_points(ctx, cycle):
+    """{design: {scenario id: [y]}} best known feasible operating points of the selected designs (empty before the selection exists)."""
+    p = ctx.input("across", cycle) / "selected_designs.json"
+    if not p.exists():
+        return {}
+    return {k: {sid: [y] for sid, y in v.get("y_by_scenario", {}).items()} for k, v in json.loads(p.read_text()).items()}
+
+
+def eval_designs_on_set(ctx, cycle, designs: dict, scen, basis, nom, kw, tag, sink, starts_models=None, known: dict | None = None):
+    """Second stage re-optimised for every scenario for each design. Returns {design: DesignEval}.
+
+    Known points are seeds that the rigorous model evaluates first and that stay candidates (request 12): the nominal design's own
+    operating point for every scenario, the best known feasible point of the design at the scenario (`known[design][scenario_id]`, a list
+    of y vectors) and, for a synthetic scenario, the solution of its parent anchor. A point the rigorous model accepts can therefore never be
+    reported infeasible."""
     y0 = nominal_y0(nom, cycle)
     selector = None
     if starts_models is not None:
         selector = StartSelector(cycle, starts_models["cols"], starts_models["regs"]["gradient_boosting"], starts_models["clfs"]["gradient_boosting"], basis, ctx.seed)
+    from lng_robust.opt.scenario_eval import DesignEval
     out = {}
     for name, x1 in designs.items():
         starts = {f.id: selector.starts(f.treated, x1, k=kw.get("n_restarts", 3)) for f in scen} if selector else None
+        kn = (known or {}).get(name, {})
         warm = {}
         first = [f for f in scen if not f.synthetic]
         rest = [f for f in scen if f.synthetic]
         kw2 = dict(kw, seed=ctx.seed)
+
+        def seeds_for(group, parent_y=None):
+            d = {}
+            for f in group:
+                pts = [list(map(float, y0))] + [list(map(float, y)) for y in kn.get(f.id, [])]
+                if parent_y and parent_y.get(f.parent_id) is not None:
+                    pts.append(list(map(float, parent_y[f.parent_id])))
+                d[f.id] = pts
+            return d
         d1 = evaluate_design(cycle, first, M_LNG, x1, basis, warm={}, y_default=y0, kw=kw2, unit=tag, member=name, purpose=f"{tag}_{name}", sink=sink,
-                             workers=ctx.workers, starts={k: v for k, v in (starts or {}).items() if k in {f.id for f in first}} or None)
+                             workers=ctx.workers, starts={k: v for k, v in (starts or {}).items() if k in {f.id for f in first}} or None,
+                             seeds=seeds_for(first))
         for sid, y in d1.y.items():
             if y is not None:
                 warm[sid] = y
         warm2 = {f.id: warm.get(f.parent_id) for f in rest}      # nearest solved scenario = the parent anchor
         d2 = evaluate_design(cycle, rest, M_LNG, x1, basis, warm={k: v for k, v in warm2.items() if v}, y_default=y0, kw=kw2, unit=tag,
                              member=name, purpose=f"{tag}_{name}", sink=sink, workers=ctx.workers,
-                             starts={k: v for k, v in (starts or {}).items() if k in {f.id for f in rest}} or None) if rest else None
-        from lng_robust.opt.scenario_eval import DesignEval
+                             starts={k: v for k, v in (starts or {}).items() if k in {f.id for f in rest}} or None,
+                             seeds=seeds_for(rest, warm)) if rest else None
         ids = [f.id for f in first] + [f.id for f in rest]
         sec = np.concatenate([d1.sec] + ([d2.sec] if d2 else []))
         feas = np.concatenate([d1.feasible] + ([d2.feasible] if d2 else []))
@@ -278,96 +308,6 @@ def eval_designs_on_set(ctx, cycle, designs: dict, scen, basis, nom, kw, tag, si
         out[name] = DesignEval(sec, feas, ydict, d1.n_evals + (d2.n_evals if d2 else 0), detail)
         out[name].ids = ids
     return out
-
-
-def unit_across(ctx):
-    cycle, P = ctx.cycle, ctx.preset["across"]
-    basis = basis_for(ctx)
-    scen, nom_feed, meta = scenario_set(ctx, basis)
-    designs, nom = design_table(ctx, cycle, basis)
-    models = load_models(ctx, cycle)
-    sink = EvalSink(ctx.out, "evals")
-    t = Timer()
-    kw = dict(max_evals=P["max_evals"], n_restarts=P["n_restarts"], maxiter=P["maxiter"])
-    res = eval_designs_on_set(ctx, cycle, designs, scen, basis, nom, kw, "across", sink, models)
-    z0 = eval_designs_on_set(ctx, cycle, designs, [nom_feed], basis, nom, kw, "across_z0", sink, models)
-    # SEC at z0 is the one number that enters Eq. 8, so it gets extra effort: the best rigorous value of three searches
-    # (the scenario-level search above, a long hybrid search with restarts, and a long Nelder-Mead run).
-    kw_long = dict(max_evals=P["z0_long_evals"], n_restarts=3, maxiter=20)
-    kw_nm = dict(method="nm", maxfev=P["z0_nm_evals"])
-    z0_long = eval_designs_on_set(ctx, cycle, designs, [nom_feed], basis, nom, kw_long, "across_z0_long", sink, models)
-    z0_nm = eval_designs_on_set(ctx, cycle, designs, [nom_feed], basis, nom, kw_nm, "across_z0_nm", sink, None)
-    sink.close()
-    sec_z0 = {}
-    for name in designs:
-        cands = {k: v[name].sec[0] for k, v in (("scenario_search", z0), ("hybrid_long", z0_long), ("nelder_mead_long", z0_nm)) if v[name].feasible[0]}
-        if name == "nominal" and nom.get("sec") == nom.get("sec"):
-            cands["nominal_nsga2_own_optimum"] = float(nom["sec"])
-        sec_z0[name] = (min(cands.values()) if cands else float("nan"), cands)
-    rows, summary = [], []
-    sc_by_id = {f.id: f for f in scen}
-    for name, de in res.items():
-        for i, (sid, d) in enumerate(zip(de.ids, de.detail)):
-            f = sc_by_id[sid]
-            rows.append(dict(design=name, scenario=sid, synthetic=f.synthetic, parent=f.parent_id or "", sec=float(de.sec[i]),
-                             feasible=bool(de.feasible[i]), mita=d["mita"], ua_kw_per_K=d["ua"], n_ref=d["n_ref"], lng_N2_mol_pct=d["lng_N2_mol_pct"],
-                             n2_pct_feed=100 * f.treated.get("N2", 0.0), y=json.dumps(de.y.get(sid))))
-        summary.append(dict(cycle=cycle, design=name, CVaR=de.cvar(basis.cvar_alpha), worst=de.worst, feasible_fraction=de.feasible_fraction,
-                            mean_sec_feasible=float(de.sec[de.feasible].mean()) if de.feasible.any() else float("nan"),
-                            sec_z0=sec_z0[name][0], feasible_z0=bool(sec_z0[name][0] == sec_z0[name][0]),
-                            n_anchor_feasible=int(sum(de.feasible[i] for i, s in enumerate(de.ids) if not sc_by_id[s].synthetic)),
-                            n_anchor=int(sum(not sc_by_id[s].synthetic for s in de.ids)),
-                            n_synth_feasible=int(sum(de.feasible[i] for i, s in enumerate(de.ids) if sc_by_id[s].synthetic)),
-                            n_synth=int(sum(sc_by_id[s].synthetic for s in de.ids))))
-    pd.DataFrame(rows).to_parquet(ctx.out / "across_scenarios.parquet", index=False)
-    pd.DataFrame(summary).to_csv(ctx.out / "across_summary.csv", index=False)
-    por_rows = []
-    nd = res["nominal"]
-    for name, de in res.items():
-        if name == "nominal":
-            continue
-        s = por_mod.por_summary(de.sec, nd.sec, de.feasible, nd.feasible, sec_z0[name][0], sec_z0["nominal"][0], basis.cvar_alpha,
-                                B=ctx.preset["bootstrap"], seed=ctx.seed)
-        por_rows.append(dict(cycle=cycle, design=name, feasible_z0_robust=bool(sec_z0[name][0] == sec_z0[name][0]), feasible_z0_nominal=bool(sec_z0["nominal"][0] == sec_z0["nominal"][0]),
-                             sec_z0_robust=sec_z0[name][0], sec_z0_nominal=sec_z0["nominal"][0], **s))
-    (ctx.out / "sec_z0_candidates.json").write_text(json.dumps({k: dict(best=v[0], candidates=v[1]) for k, v in sec_z0.items()}, indent=2, default=float))
-    pd.DataFrame(por_rows).to_csv(ctx.out / "price_of_robustness.csv", index=False)
-    # the designs at z0 (Tables 5 and 6): re-solve once serially to keep exergy numbers and LNG N2
-    dz = {}
-    for name, x1 in designs.items():
-        best_src = min((v for v in (z0, z0_long, z0_nm) if v[name].feasible[0]), key=lambda v: v[name].sec[0], default=None)
-        y = best_src[name].y.get(nom_feed.id) if best_src is not None else None
-        if y is None:
-            dz[name] = dict(feasible=False)
-            continue
-        x = dict(x1)
-        x.update({n: v for n, v in zip(STAGE2[cycle], y)})
-        r = solve(cycle, nom_feed.treated, basis.feed_T, basis.feed_P, M_LNG, x, basis)
-        ro = r.as_row()
-        dz[name] = dict(feasible=bool(r.feasible), sec=float(r.sec), exergy_eff=float(r.exergy_eff), mita=float(r.mita), ua_kw_per_K=float(r.ua),
-                        lng_N2_mol_pct=float(ro["lng_N2_mol_pct"]), exergy_destruction_kw=r.exergy_destruction_kw, w_comp_kw=float(r.w_comp_kw),
-                        w_exp_kw=float(r.w_exp_kw), ua_installed_kw_per_K=float(x1.get("ua_installed_kw_per_K", np.nan)),
-                        n_ref_rated_mol_s=float(x1.get("n_ref_rated_mol_s", np.nan)), operating=dict(zip(STAGE2[cycle], [float(v) for v in y])),
-                        refrigerant=x1.get("ref"))
-    (ctx.out / "designs_at_z0.json").write_text(json.dumps(dz, indent=2, default=float))
-    # surrogate versus rigorous at every scenario optimum (Figure 8)
-    from lng_robust.surrogate.train import alr_features
-    cols, reg, clf = models["cols"], models["regs"]["gradient_boosting"], models["clfs"]["gradient_boosting"]
-    names = nominal_var_names(cycle)
-    sv = []
-    for name, de in res.items():
-        x1 = designs[name]
-        for i, sid in enumerate(de.ids):
-            y = de.y.get(sid)
-            if y is None:
-                continue
-            v = [dict(zip(STAGE2[cycle], y)).get(n) if n in STAGE2[cycle] else (x1.get("ref") or {}).get(n[2:], 0.0) for n in names]
-            X = np.array([v + alr_features(sc_by_id[sid].treated)])
-            sv.append(dict(cycle=cycle, design=name, scenario=sid, rigorous_sec=float(de.sec[i]), surrogate_sec=float(reg.predict(X)[0]),
-                           surrogate_prob_feasible=float(clf.predict_proba(X)[0, 1]), rigorous_feasible=True))
-    pd.DataFrame(sv).to_csv(ctx.out / "surrogate_vs_rigorous_at_optima.csv", index=False)
-    write_done(ctx.out, unit="across", cycle=cycle, status="complete", minutes=t.minutes(), designs=list(designs))
-    return summary
 
 
 # ------------------------------------------------------------------ ranking-reversal data (Phase 8)
@@ -400,7 +340,7 @@ def unit_reversal(ctx):
     t = Timer()
     kw = dict(max_evals=P["max_evals"], n_restarts=P["n_restarts"], maxiter=12)
     models = load_models(ctx, cycle) if P["n_restarts"] > 0 else None
-    res = eval_designs_on_set(ctx, cycle, {key: designs[key]}, comps, basis, nom, kw, "reversal", sink, models)[key]
+    res = eval_designs_on_set(ctx, cycle, {key: designs[key]}, comps, basis, nom, kw, "reversal", sink, models, known=known_points(ctx, cycle))[key]
     sink.close()
     from lng_robust.analysis.reversal import coords
     rows = []

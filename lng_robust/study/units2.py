@@ -17,7 +17,7 @@ from lng_robust.opt.space import STAGE2, bounds
 from lng_robust.study.common import M_LNG, basis_for, load_nominal, nominal_y0, scenario_set, write_done
 from lng_robust.study.config import ARCHIVE_CASES, MODEL_CASES, SET_CASES, VARIANTS
 from lng_robust.study.store import EvalSink, Timer
-from lng_robust.study.units import (_log, design_table, eval_designs_on_set, load_archive, load_final, load_models, unit_nominal)
+from lng_robust.study.units import (_log, design_table, eval_designs_on_set, known_points, load_archive, load_final, load_models, unit_nominal)
 from lng_robust.surrogate.train import C4S, C5S, alr_features
 
 ALR_NAMES = ["alr_N2", "alr_C2", "alr_C3", "alr_C4", "alr_C5plus"]
@@ -142,19 +142,29 @@ def unit_sobol_pref(ctx):
 
 
 # ------------------------------------------------------------------ sensitivity cases
+def _selected(ctx, cycle):
+    p = ctx.input("across", cycle) / "selected_designs.json"
+    return json.loads(p.read_text()) if p.exists() else {}
+
+
 def _candidates(ctx, cycle, k):
-    """Top-k distinct designs of the main cvar_iso archive: chance-constraint-met first, then lowest CVaR."""
-    arch = load_archive(ctx, cycle, "cvar_iso")
-    seen, out = set(), []
+    """Top-k distinct iso-UA designs: the selected cvar_iso design first, then the best archived (cvar_iso and worst_iso archives together)
+    by archived CVaR with the chance constraint first. Returns [(label, vec, x1 or None)]."""
+    sel = _selected(ctx, cycle)
+    out, seen = [], set()
+    if "cvar_iso" in sel and sel["cvar_iso"].get("vec") is not None:
+        out.append(("selected_cvar_iso", sel["cvar_iso"]["vec"], sel["cvar_iso"]["x1"]))
+        seen.add(tuple(round(v, 9) for v in sel["cvar_iso"]["vec"]))
+    arch = load_archive(ctx, cycle, "cvar_iso") + load_archive(ctx, cycle, "worst_iso")
     for a in sorted(arch, key=lambda a: (0 if a["feasible_fraction"] >= 0.95 else 1, a["cvar"] if a["feasible_fraction"] >= 0.95 else -a["feasible_fraction"])):
         key = tuple(round(v, 9) for v in a["vec"])
         if key in seen:
             continue
         seen.add(key)
-        out.append(a)
+        out.append((f"archive_g{a['gen']}_m{a['member']}", a["vec"], None))
         if len(out) >= k:
             break
-    return out
+    return out[:k]
 
 
 def unit_sens(ctx):
@@ -194,8 +204,8 @@ def _sens_model(ctx, cycle, case, P):
     from lng_robust.study.common import nominal_design_dict
     designs = {"nominal_new": x1_from_vec(cycle, stage1_vec_of_design(cycle, nominal_design_dict(info), M_LNG), M_LNG)}
     cands = _candidates(ctx, cycle, P["k_designs"])
-    for i, a in enumerate(cands):
-        designs[f"main_robust_cand{i}"] = x1_from_vec(cycle, np.asarray(a["vec"], float), M_LNG)
+    for i, (label, vec, x1c) in enumerate(cands):
+        designs[f"main_robust_cand{i}"] = x1c if x1c is not None else x1_from_vec(cycle, np.asarray(vec, float), M_LNG)
     sink = EvalSink(ctx.out, "evals")
     kw = dict(max_evals=P["max_evals"], n_restarts=P["n_restarts"], maxiter=12)
     ev = eval_designs_on_set(ctx, cycle, designs, scen, basis, info, kw, f"sens_{case}", sink, load_models(ctx, cycle))
@@ -220,7 +230,7 @@ def _sens_archive(ctx, cycle, case):
     basis = basis_for(ctx)
     alpha = spec.get("alpha", basis.cvar_alpha)
     pen = spec.get("sec_pen", basis.sec_penalty_kwh_per_kg)
-    arch = load_archive(ctx, cycle, "cvar_iso")
+    arch = load_archive(ctx, cycle, "cvar_iso") + load_archive(ctx, cycle, "worst_iso")      # iso-UA pool
     best, rows = None, []
     for a in arch:
         sec = np.where(np.array(a["feasible"]), np.array(a["sec"]), pen)
@@ -229,7 +239,8 @@ def _sens_archive(ctx, cycle, case):
         rows.append((obj, ff, a["gen"], a["member"]))
         if ff >= basis.chance_feasible_fraction and (best is None or obj < best[0]):
             best = (obj, ff, a["gen"], a["member"], a["vec"])
-    main = load_final(ctx, cycle, "cvar_iso")
+    sel = _selected(ctx, cycle)
+    main = dict(vec=sel["cvar_iso"]["vec"]) if sel.get("cvar_iso", {}).get("vec") is not None else load_final(ctx, cycle, "cvar_iso")
     nom_across = pd.read_csv(ctx.input("across", cycle) / "across_summary.csv") if (ctx.input("across", cycle) / "across_summary.csv").exists() else None
     out = dict(protocol="re-selection among the main-run archive of evaluated first-stage designs with the changed alpha or penalty; no new evaluations",
                alpha=alpha, sec_pen=pen, n_archive=len(arch), status="complete")
@@ -237,7 +248,7 @@ def _sens_archive(ctx, cycle, case):
         out.update(note="no archive member meets the chance constraint", best=None)
     else:
         out.update(best=dict(objective=best[0], feasible_fraction=best[1], generation=best[2], member=best[3], vec=best[4]),
-                   same_design_as_main=bool(main is not None and np.allclose(best[4], main["vec"])))
+                   same_design_as_main=bool(main is not None and main.get("vec") is not None and np.allclose(best[4], main["vec"])))
     # nominal design under the changed alpha/penalty: its scenario vector from the across unit
     ap = ctx.input("across", cycle) / "across_scenarios.parquet"
     if ap.exists():
@@ -258,7 +269,7 @@ def _sens_set(ctx, cycle, case, P):
     designs, nom = design_table(ctx, cycle, basis)
     sink = EvalSink(ctx.out, "evals")
     kw = dict(max_evals=P["max_evals"], n_restarts=P["n_restarts"], maxiter=12)
-    ev = eval_designs_on_set(ctx, cycle, designs, scen, basis, nom, kw, f"sens_{case}", sink, load_models(ctx, cycle))
+    ev = eval_designs_on_set(ctx, cycle, designs, scen, basis, nom, kw, f"sens_{case}", sink, load_models(ctx, cycle), known=known_points(ctx, cycle))
     sink.close()
     out = dict(protocol="main-run designs (nominal and robust) evaluated across the alternative scenario set, second stage re-optimised; designs are NOT re-optimised",
                set=name, kappa=meta["kappa"], anchors=meta["anchor_ids"], nominal_anchor_of_set=meta["nominal"]["nominal"], status="complete")

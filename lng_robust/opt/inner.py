@@ -88,6 +88,25 @@ class _Budget(Exception):
     pass
 
 
+def apply_seed_points(ev: "_Evaluator", seed_points, u0, y_lo, span):
+    """Known points (the design's own operating point, the best known feasible point of the scenario) are evaluated first, outside the
+    search budget, and are always candidates: a point the rigorous model accepts can never be reported infeasible. Returns the start
+    point: the best feasible seed if any, else u0."""
+    if not seed_points:
+        return u0
+    ev.max_evals += len(seed_points)
+    best_u, best_sec = None, float("inf")
+    for y in seed_points:
+        u = np.clip((np.asarray(y, float) - y_lo) / span, 0.0, 1.0)
+        try:
+            r = ev.run(u)
+        except _Budget:
+            break
+        if r.feasible and r.sec < best_sec:
+            best_u, best_sec = u, r.sec
+    return best_u if best_u is not None else u0
+
+
 def _slsqp_from(ev: _Evaluator, u0, maxiter, box=None):
     try:
         bnds = [(0.0, 1.0)] * len(u0) if box is None else [(max(0.0, v - box), min(1.0, v + box)) for v in u0]
@@ -126,11 +145,12 @@ def _simplex(u0, step=0.08):
     return np.vstack([u0] + [np.clip(u0 + step * np.eye(n)[i] * (1 if u0[i] < 0.9 else -1), 0, 1) for i in range(n)])
 
 
-def solve_nelder_mead(cycle, feed, m_lng, x1, y0, y_lo, y_hi, basis, *, maxfev=16) -> InnerResult:
+def solve_nelder_mead(cycle, feed, m_lng, x1, y0, y_lo, y_hi, basis, *, maxfev=16, seed_points=None) -> InnerResult:
     """The earlier second-stage method (penalised Nelder-Mead). Same evaluation bookkeeping as solve_slsqp."""
     ev = _Evaluator(cycle, feed, m_lng, x1, y_lo, y_hi, basis, 10 ** 9)
     span = y_hi - y_lo
     u0 = np.clip((np.asarray(y0, float) - y_lo) / span, 0.0, 1.0)
+    u0 = apply_seed_points(ev, seed_points, u0, y_lo, span)
 
     def f(u):
         r = ev.run(u)
@@ -251,7 +271,7 @@ class _Found(Exception):
 
 
 def solve_hybrid(cycle, feed, m_lng, x1, y0, y_lo, y_hi, basis, *, max_evals=40, n_restarts=0, seed=1, feas_max=24, box=0.20, maxiter=12,
-                 extra_starts=None, start_label="warm", **_) -> InnerResult:
+                 extra_starts=None, start_label="warm", seed_points=None, **_) -> InnerResult:
     """Second-stage solver used by the study.
     Phase A: one penalised Nelder-Mead run (at most `feas_max` evaluations) that stops at the first rigorous-feasible point.
     Phase B: SLSQP restricted to a box of half-width `box` (scaled units) around the best feasible point, using the remaining budget.
@@ -261,6 +281,7 @@ def solve_hybrid(cycle, feed, m_lng, x1, y0, y_lo, y_hi, basis, *, max_evals=40,
     span = y_hi - y_lo
     u0 = np.clip((np.asarray(y0, float) - y_lo) / span, 0.0, 1.0)
     rng = np.random.default_rng(seed)
+    u0 = apply_seed_points(ev, seed_points, u0, y_lo, span)
 
     def f(u):
         r = ev.run(u)

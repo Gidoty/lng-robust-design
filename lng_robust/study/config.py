@@ -29,12 +29,12 @@ PRESETS = {
     # probe: tiny, to measure minutes per evaluation on the runner. Its numbers are NOT results.
     "probe": dict(S=6, nominal=dict(pop=8, gen=2), sample=dict(n0=48, rounds=1, batch=24),
                   robust=dict(pop=3, gens=1, inner=dict(max_evals=20, n_restarts=1, maxiter=6), unit_wall_min=40),
-                  across=dict(max_evals=30, n_restarts=1, maxiter=8, z0_long_evals=40, z0_nm_evals=30), reversal=dict(n_comp=10, max_evals=20, n_restarts=0),
+                  across=dict(max_evals=30, n_restarts=1, maxiter=8, z0_long_evals=40, z0_nm_evals=30), select=dict(k_iso_cvar=1, k_iso_worst=1, k_125=1), reversal=dict(n_comp=10, max_evals=20, n_restarts=0),
                   sobol=dict(N=64, oat_points=3), sens=dict(nominal=dict(pop=8, gen=2), k_designs=1, max_evals=20, n_restarts=1),
                   gp_max=300, bootstrap=200),
     "full": dict(S=None, nominal=dict(pop=60, gen=40), sample=dict(n0=2000, rounds=10, batch=800),
                  robust=dict(pop=12, gens=10, inner=dict(max_evals=40, n_restarts=2, maxiter=12), inner_by_cycle={"n2_dual": dict(max_evals=64)}, unit_wall_min=280),
-                 across=dict(max_evals=80, n_restarts=3, maxiter=15, z0_long_evals=200, z0_nm_evals=150), reversal=dict(n_comp=300, max_evals=40, n_restarts=2),
+                 across=dict(max_evals=80, n_restarts=3, maxiter=15, z0_long_evals=200, z0_nm_evals=150), select=dict(k_iso_cvar=3, k_iso_worst=2, k_125=3), reversal=dict(n_comp=300, max_evals=40, n_restarts=2),
                  sobol=dict(N=1024, oat_points=9), sens=dict(nominal=dict(pop=40, gen=25), k_designs=4, max_evals=40, n_restarts=3),
                  gp_max=1500, bootstrap=5000),
 }

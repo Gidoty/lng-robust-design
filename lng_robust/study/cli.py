@@ -12,11 +12,11 @@ from pathlib import Path
 
 from lng_robust.opt.parallel import shutdown
 from lng_robust.study.common import NoNominalDesign, write_done
-from lng_robust.study import units, units2
+from lng_robust.study import select, units, units2
 from lng_robust.study.config import Ctx, get_preset
 
 UNITS = {"nominal": units.unit_nominal, "sample": units.unit_sample, "surrogate": units.unit_surrogate, "robust": units.unit_robust,
-         "across": units.unit_across, "reversal": units.unit_reversal, "sobol": units2.unit_sobol, "sobol_pref": units2.unit_sobol_pref,
+         "across": select.unit_across, "evalcand": select.unit_evalcand, "reversal": units.unit_reversal, "sobol": units2.unit_sobol, "sobol_pref": units2.unit_sobol_pref,
          "sens": units2.unit_sens}
 
 

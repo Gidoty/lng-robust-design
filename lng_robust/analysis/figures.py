@@ -223,3 +223,17 @@ def fig9_sobol(sob: pd.DataFrame, pref: pd.DataFrame, out):
         axes[0][-1].set_ylabel("")
     axes[0][0].legend(frameon=False, fontsize=6)
     return save(fig, out, "Figure_9")
+
+
+def figS1_convergence(h: pd.DataFrame, out):
+    """Best objective per generation of every robust chain. Supplementary figure (not one of Figure_1 to Figure_9)."""
+    cyc = [c for c in ("smr", "n2_single", "n2_dual") if c in set(h.cycle)]
+    fig, axes = plt.subplots(1, len(cyc), figsize=(2.6 * len(cyc), 2.8), squeeze=False)
+    for ax, c in zip(axes[0], cyc):
+        for v, d in h[h.cycle == c].groupby("variant"):
+            d = d.dropna(subset=["best_feasible_objective"]).sort_values("generation")
+            ax.plot(d.generation, d.best_feasible_objective, "o-", ms=3, lw=0.9, color=DESIGN_COLOR[v], label=DESIGN_LABEL[v])
+        ax.set_xlabel("Generation (-)"); ax.set_ylabel("Best feasible objective (kWh kg$^{-1}$)" if c == cyc[0] else "")
+        ax.text(0.97, 0.95, CYCLE_LABEL[c], transform=ax.transAxes, ha="right", va="top", fontsize=6.5)
+    axes[0][0].legend(frameon=False, fontsize=5.5)
+    return save(fig, out, "Figure_S1")

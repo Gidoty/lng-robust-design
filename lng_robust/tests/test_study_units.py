@@ -184,3 +184,25 @@ def test_nominal_seed_vectors_are_inside_bounds_and_follow_the_variable_order(ba
         lo, hi = bounds(cycle, names, basis)
         S = seed_vectors(cycle, names, basis)
         assert len(S) == 10 and all(((v >= lo - 1e-12) & (v <= hi + 1e-12)).all() for v in S) and len(S[0]) == len(names)
+
+
+def test_downstream_workflow_reuses_the_source_run_and_has_no_robust_search():
+    import yaml
+    path = Path(__file__).parents[2] / ".github" / "workflows" / "downstream.yml"
+    wf = yaml.safe_load(path.read_text())
+    jobs = wf["jobs"]
+    assert set(jobs) == {"tests", "evalcand", "across", "reversal", "sens_model", "sens_archive", "sens_sets", "package"}
+    assert not any(j.startswith("robust") or j in ("nominal", "sample", "surrogate") for j in jobs)
+    assert wf["permissions"]["actions"] == "read" and "source_run_id" in (wf.get(True) or wf["on"])["workflow_dispatch"]["inputs"]
+    assert jobs["across"]["needs"] == ["evalcand"] and set(jobs["package"]["needs"]) >= {"across", "reversal", "sens_model"}
+    for name, j in jobs.items():
+        assert j["timeout-minutes"] <= 330
+        for st in j["steps"]:
+            if st.get("uses", "").startswith("actions/download-artifact"):
+                w = st["with"]
+                if "run-id" in w:                       # a download from the source run needs the token
+                    assert "github-token" in w
+                else:                                   # a download from this run must not take the source's across/reversal/sens outputs
+                    assert not w["pattern"].startswith(("unit-nominal", "unit-surrogate", "unit-robust", "shards-robust"))
+    text = path.read_text()
+    assert "reusing run" in text and "results/${{ github.run_id }}" in text

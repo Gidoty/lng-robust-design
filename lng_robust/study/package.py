@@ -72,6 +72,7 @@ def provenance(work: Path, out: Path, run_id: str, preset: str, seed: int, done:
     prov = dict(run_id=run_id, preset=preset, commit_hash=sha, seeds=dict(global_seed=seed, scenario_seed=seed, note="all unit seeds derive from the global seed"),
                 package_versions={p: v(p) for p in PKGS}, python=sys.version, platform=platform.platform(), cpu_count=os.cpu_count(),
                 runner=dict(name=os.environ.get("RUNNER_NAME"), os=os.environ.get("RUNNER_OS"), arch=os.environ.get("RUNNER_ARCH")),
+                source_run_id=os.environ.get("SOURCE_RUN_ID"),
                 github=dict(run_id=os.environ.get("GITHUB_RUN_ID"), run_attempt=os.environ.get("GITHUB_RUN_ATTEMPT"), repository=os.environ.get("GITHUB_REPOSITORY"),
                             ref=os.environ.get("GITHUB_REF")),
                 requirements_lock_sha256=__import__("hashlib").sha256((Path(__file__).parents[2] / "requirements.lock").read_bytes()).hexdigest()
@@ -132,7 +133,8 @@ def build(work: Path, out: Path, run_id: str = "local", preset: str = "full", se
         p = pd.read_csv(d / "price_of_robustness.csv") if (d / "price_of_robustness.csv").exists() else pd.DataFrame()
         dz = _read(d / "designs_at_z0.json") or {}
         for _, r in s.iterrows():
-            row = dict(cycle=c, design=r.design, SEC_z0_kWh_per_kg=r.sec_z0, CVaR_0p9_kWh_per_kg=r.CVaR, worst_case_kWh_per_kg=r.worst, feasible_fraction=r.feasible_fraction,
+            row = dict(cycle=c, design=r.design, selected_from_candidate=r.get("source_candidate"), design_origin=r.get("origin"), chance_constraint_met=r.get("chance_met"),
+                       SEC_z0_kWh_per_kg=r.sec_z0, SEC_z0_search_min=r.get("sec_z0_min"), SEC_z0_search_max=r.get("sec_z0_max"), SEC_z0_search_spread_pct=r.get("sec_z0_spread_pct"), CVaR_0p9_kWh_per_kg=r.CVaR, worst_case_kWh_per_kg=r.worst, feasible_fraction=r.feasible_fraction,
                        anchors_feasible=f"{r.n_anchor_feasible}/{r.n_anchor}", synthetic_feasible=f"{r.n_synth_feasible}/{r.n_synth}",
                        LNG_N2_mol_pct_z0=(dz.get(r.design) or {}).get("lng_N2_mol_pct"), MITA_z0_K=(dz.get(r.design) or {}).get("mita"),
                        UA_z0_kW_per_K=(dz.get(r.design) or {}).get("ua_kw_per_K"), UA_installed_kW_per_K=(dz.get(r.design) or {}).get("ua_installed_kw_per_K"))
@@ -142,7 +144,8 @@ def build(work: Path, out: Path, run_id: str = "local", preset: str = "full", se
                 q = p[p.design == r.design]
                 if len(q):
                     q = q.iloc[0]
-                    row.update(PoR_z0_pct=100 * q.PoR_z0, PoR_scenario_mean_pct=100 * q.PoR_scenario_mean, PoR_scenario_mean_lo95_pct=100 * q.PoR_scenario_mean_lo95,
+                    row.update(PoR_z0_within_z0_search_spread=q.get("PoR_z0_within_z0_spread"), n_scenarios_feasible_for_both=q.get("n_both_feasible"),
+                               PoR_z0_pct=100 * q.PoR_z0, PoR_scenario_mean_pct=100 * q.PoR_scenario_mean, PoR_scenario_mean_lo95_pct=100 * q.PoR_scenario_mean_lo95,
                                PoR_scenario_mean_hi95_pct=100 * q.PoR_scenario_mean_hi95, dCVaR_pct=100 * q.dCVaR_rel, dCVaR_lo95_pct=100 * q.dCVaR_rel_lo95,
                                dCVaR_hi95_pct=100 * q.dCVaR_rel_hi95, dFeasibleFraction=q.dFeasibleFraction, dFF_lo95=q.dFeasibleFraction_lo95, dFF_hi95=q.dFeasibleFraction_hi95)
                     if r.design in ("cvar_iso", "cvar_125"):
@@ -160,6 +163,43 @@ def build(work: Path, out: Path, run_id: str = "local", preset: str = "full", se
             surr_vs.append(pd.read_csv(sv))
     if t6:
         pd.DataFrame(t6).to_csv(T / "T6_nominal_cvar_worst_designs.csv", index=False)
+    fcs, per, sels = [], [], []
+    for c in CYCLES:
+        d = work / f"unit-across-{c}"
+        for name, lst in (("failure_codes.csv", fcs), ("per_scenario.csv", per), ("selection_table.csv", sels)):
+            if (d / name).exists():
+                try:
+                    lst.append(pd.read_csv(d / name))
+                except pd.errors.EmptyDataError:
+                    pass
+    if fcs:
+        f = pd.concat(fcs)
+        f.to_csv(T / "TS_failure_codes.csv", index=False)           # request 14: count of each failure code over the scenarios, anchors and synthetic apart
+    if per:
+        pp = pd.concat(per)
+        pp.insert(4, "group", np.where(pp.synthetic, "synthetic", "anchor"))
+        pp.drop(columns=["y", "sec_with_penalty"], errors="ignore").to_csv(T / "TS_across_per_scenario.csv", index=False)     # request 15
+    if sels:
+        pd.concat(sels).to_csv(T / "TS_selection_table.csv", index=False)                                                      # request 13: all candidates
+    # request 16: best objective per generation of every robust chain (final.json of the last stage holds the whole history)
+    hist, status = [], []
+    for c in CYCLES:
+        for v in VARIANTS:
+            dirs = sorted(work.glob(f"unit-robust-{c}-{v}-s*"), key=lambda p: int(p.name.rsplit("-s", 1)[1]))
+            fin = next((_read(d / "final.json") for d in reversed(dirs) if (d / "final.json").exists()), None)
+            if not fin:
+                continue
+            status.append(dict(cycle=c, variant=v, generation_reached=fin["generation"], target_generations=fin["target_generations"], status=fin["status"],
+                               chance_met_at_end=fin["chance_met"]))
+            for h in fin["history"]:
+                hist.append(dict(cycle=c, variant=v, generation=h["gen"], best_feasible_objective=h["best_feasible_F"], best_constraint_violation=h["best_CV"],
+                                 n_feasible_in_population=h["n_feasible"], objective="CVaR 0.9" if v != "worst_iso" else "worst case SEC", unit="kWh/kg"))
+    if hist:
+        hdf = pd.DataFrame(hist)
+        hdf.to_csv(T / "TS_robust_convergence.csv", index=False)
+        pd.DataFrame(status).to_csv(T / "TS_robust_chain_status.csv", index=False)
+        for r_ in status:
+            H.add(f"Generation reached, robust chain {r_['variant']} ({r_['cycle']})", r_["generation_reached"], "generation (target 10)", "tables/TS_robust_chain_status.csv", f"cycle={r_['cycle']}, variant={r_['variant']}", "generation_reached")
     if surr_vs:
         sv = pd.concat(surr_vs)
         sv["abs_diff"] = (sv.surrogate_sec - sv.rigorous_sec).abs()
@@ -248,6 +288,8 @@ def build(work: Path, out: Path, run_id: str = "local", preset: str = "full", se
         made += F.fig6_sec_distribution(pd.concat(across_all), out / "figures")
     if len(cells):
         made += F.fig7_reversal(cells, out / "figures")
+    if hist:
+        made += F.figS1_convergence(pd.DataFrame(hist), out / "figures")
     if oof:
         made += F.fig8_surrogate(oof, basis.mita_min_K, out / "figures")
     if isinstance(sob, pd.DataFrame) and len(sob):
