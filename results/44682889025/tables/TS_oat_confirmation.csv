@@ -1,0 +1,4 @@
+cycle,spearman_oat_vs_ST,top2_sobol_ST,top2_oat,top2_agree,box_fraction_of_range,n_variables_with_two_feasible_points
+smr,0.9440559440559443,"['P_low_bar', 'flow_ratio']","['P_low_bar', 'flow_ratio']",True,0.15,12
+n2_single,1.0,"['alr_N2', 'flow_ratio']","['alr_N2', 'flow_ratio']",True,0.15,7
+n2_dual,0.9,"['alr_N2', 'flow_ratio']","['P_low_bar', 'flow_ratio']",False,0.15,9

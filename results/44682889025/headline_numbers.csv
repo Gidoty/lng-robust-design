@@ -1,0 +1,63 @@
+label,value,unit,source_file,source_row,source_column
+Nominal SEC (smr),0.4121718398916725,kWh/kg,tables/T5_nominal_designs.csv,cycle=smr,SEC_kWh_per_kg
+Nominal LNG N2 content (smr),0.14085244599783364,mol %,tables/T5_nominal_designs.csv,cycle=smr,LNG_N2_mol_pct
+Nominal UA (smr),306.8254519716049,kW/K,tables/T5_nominal_designs.csv,cycle=smr,UA_kW_per_K
+Nominal SEC (n2_single),0.9193265452902404,kWh/kg,tables/T5_nominal_designs.csv,cycle=n2_single,SEC_kWh_per_kg
+Nominal LNG N2 content (n2_single),0.18508413773900162,mol %,tables/T5_nominal_designs.csv,cycle=n2_single,LNG_N2_mol_pct
+Nominal UA (n2_single),63.14116310779211,kW/K,tables/T5_nominal_designs.csv,cycle=n2_single,UA_kW_per_K
+Nominal SEC (n2_dual),0.7254103802690858,kWh/kg,tables/T5_nominal_designs.csv,cycle=n2_dual,SEC_kWh_per_kg
+Nominal LNG N2 content (n2_dual),0.14341380858483047,mol %,tables/T5_nominal_designs.csv,cycle=n2_dual,LNG_N2_mol_pct
+Nominal UA (n2_dual),79.04893339848259,kW/K,tables/T5_nominal_designs.csv,cycle=n2_dual,UA_kW_per_K
+CVaR0.9 nominal (smr),2.0,kWh/kg,tables/T6_nominal_cvar_worst_designs.csv,"cycle=smr, design=nominal",CVaR_0p9_kWh_per_kg
+Feasible fraction nominal (smr),0.86,-,tables/T6_nominal_cvar_worst_designs.csv,"cycle=smr, design=nominal",feasible_fraction
+"PoR at z0, cvar_iso (smr)",6.7151055178172046,%,tables/T6_nominal_cvar_worst_designs.csv,"cycle=smr, design=cvar_iso",PoR_z0_pct
+"PoR scenario mean 95% CI low, cvar_iso (smr)",-0.6755832683667337,%,tables/T6_nominal_cvar_worst_designs.csv,"cycle=smr, design=cvar_iso",PoR_scenario_mean_lo95_pct
+"PoR scenario mean 95% CI high, cvar_iso (smr)",4.1556739870602915,%,tables/T6_nominal_cvar_worst_designs.csv,"cycle=smr, design=cvar_iso",PoR_scenario_mean_hi95_pct
+CVaR0.9 cvar_iso (smr),0.5047392751411806,kWh/kg,tables/T6_nominal_cvar_worst_designs.csv,"cycle=smr, design=cvar_iso",CVaR_0p9_kWh_per_kg
+Feasible fraction cvar_iso (smr),1.0,-,tables/T6_nominal_cvar_worst_designs.csv,"cycle=smr, design=cvar_iso",feasible_fraction
+"PoR at z0, cvar_125 (smr)",-7.0829376893079115,%,tables/T6_nominal_cvar_worst_designs.csv,"cycle=smr, design=cvar_125",PoR_z0_pct
+"PoR scenario mean 95% CI low, cvar_125 (smr)",-7.863217622346533,%,tables/T6_nominal_cvar_worst_designs.csv,"cycle=smr, design=cvar_125",PoR_scenario_mean_lo95_pct
+"PoR scenario mean 95% CI high, cvar_125 (smr)",-5.248758204735187,%,tables/T6_nominal_cvar_worst_designs.csv,"cycle=smr, design=cvar_125",PoR_scenario_mean_hi95_pct
+CVaR0.9 cvar_125 (smr),0.46762526876093463,kWh/kg,tables/T6_nominal_cvar_worst_designs.csv,"cycle=smr, design=cvar_125",CVaR_0p9_kWh_per_kg
+Feasible fraction cvar_125 (smr),1.0,-,tables/T6_nominal_cvar_worst_designs.csv,"cycle=smr, design=cvar_125",feasible_fraction
+CVaR0.9 worst_iso (smr),0.4835149693715972,kWh/kg,tables/T6_nominal_cvar_worst_designs.csv,"cycle=smr, design=worst_iso",CVaR_0p9_kWh_per_kg
+Feasible fraction worst_iso (smr),1.0,-,tables/T6_nominal_cvar_worst_designs.csv,"cycle=smr, design=worst_iso",feasible_fraction
+CVaR0.9 nominal (n2_single),2.0,kWh/kg,tables/T6_nominal_cvar_worst_designs.csv,"cycle=n2_single, design=nominal",CVaR_0p9_kWh_per_kg
+Feasible fraction nominal (n2_single),0.14,-,tables/T6_nominal_cvar_worst_designs.csv,"cycle=n2_single, design=nominal",feasible_fraction
+"PoR at z0, cvar_iso (n2_single)",-0.2542896544608223,%,tables/T6_nominal_cvar_worst_designs.csv,"cycle=n2_single, design=cvar_iso",PoR_z0_pct
+"PoR scenario mean 95% CI low, cvar_iso (n2_single)",-0.01876971359433191,%,tables/T6_nominal_cvar_worst_designs.csv,"cycle=n2_single, design=cvar_iso",PoR_scenario_mean_lo95_pct
+"PoR scenario mean 95% CI high, cvar_iso (n2_single)",5.757519381809546,%,tables/T6_nominal_cvar_worst_designs.csv,"cycle=n2_single, design=cvar_iso",PoR_scenario_mean_hi95_pct
+CVaR0.9 cvar_iso (n2_single),2.0,kWh/kg,tables/T6_nominal_cvar_worst_designs.csv,"cycle=n2_single, design=cvar_iso",CVaR_0p9_kWh_per_kg
+Feasible fraction cvar_iso (n2_single),0.84,-,tables/T6_nominal_cvar_worst_designs.csv,"cycle=n2_single, design=cvar_iso",feasible_fraction
+"PoR at z0, cvar_125 (n2_single)",-10.410784704607657,%,tables/T6_nominal_cvar_worst_designs.csv,"cycle=n2_single, design=cvar_125",PoR_z0_pct
+"PoR scenario mean 95% CI low, cvar_125 (n2_single)",-7.487968440384135,%,tables/T6_nominal_cvar_worst_designs.csv,"cycle=n2_single, design=cvar_125",PoR_scenario_mean_lo95_pct
+"PoR scenario mean 95% CI high, cvar_125 (n2_single)",-4.3307065241167635,%,tables/T6_nominal_cvar_worst_designs.csv,"cycle=n2_single, design=cvar_125",PoR_scenario_mean_hi95_pct
+CVaR0.9 cvar_125 (n2_single),0.9986071741050466,kWh/kg,tables/T6_nominal_cvar_worst_designs.csv,"cycle=n2_single, design=cvar_125",CVaR_0p9_kWh_per_kg
+Feasible fraction cvar_125 (n2_single),1.0,-,tables/T6_nominal_cvar_worst_designs.csv,"cycle=n2_single, design=cvar_125",feasible_fraction
+CVaR0.9 worst_iso (n2_single),2.0,kWh/kg,tables/T6_nominal_cvar_worst_designs.csv,"cycle=n2_single, design=worst_iso",CVaR_0p9_kWh_per_kg
+Feasible fraction worst_iso (n2_single),0.84,-,tables/T6_nominal_cvar_worst_designs.csv,"cycle=n2_single, design=worst_iso",feasible_fraction
+CVaR0.9 nominal (n2_dual),2.0,kWh/kg,tables/T6_nominal_cvar_worst_designs.csv,"cycle=n2_dual, design=nominal",CVaR_0p9_kWh_per_kg
+Feasible fraction nominal (n2_dual),0.0,-,tables/T6_nominal_cvar_worst_designs.csv,"cycle=n2_dual, design=nominal",feasible_fraction
+"PoR at z0, cvar_iso (n2_dual)",0.026491918979434346,%,tables/T6_nominal_cvar_worst_designs.csv,"cycle=n2_dual, design=cvar_iso",PoR_z0_pct
+"PoR scenario mean 95% CI low, cvar_iso (n2_dual)",,%,tables/T6_nominal_cvar_worst_designs.csv,"cycle=n2_dual, design=cvar_iso",PoR_scenario_mean_lo95_pct
+"PoR scenario mean 95% CI high, cvar_iso (n2_dual)",,%,tables/T6_nominal_cvar_worst_designs.csv,"cycle=n2_dual, design=cvar_iso",PoR_scenario_mean_hi95_pct
+CVaR0.9 cvar_iso (n2_dual),2.0,kWh/kg,tables/T6_nominal_cvar_worst_designs.csv,"cycle=n2_dual, design=cvar_iso",CVaR_0p9_kWh_per_kg
+Feasible fraction cvar_iso (n2_dual),0.76,-,tables/T6_nominal_cvar_worst_designs.csv,"cycle=n2_dual, design=cvar_iso",feasible_fraction
+"PoR at z0, cvar_125 (n2_dual)",-6.409683950932172,%,tables/T6_nominal_cvar_worst_designs.csv,"cycle=n2_dual, design=cvar_125",PoR_z0_pct
+"PoR scenario mean 95% CI low, cvar_125 (n2_dual)",,%,tables/T6_nominal_cvar_worst_designs.csv,"cycle=n2_dual, design=cvar_125",PoR_scenario_mean_lo95_pct
+"PoR scenario mean 95% CI high, cvar_125 (n2_dual)",,%,tables/T6_nominal_cvar_worst_designs.csv,"cycle=n2_dual, design=cvar_125",PoR_scenario_mean_hi95_pct
+CVaR0.9 cvar_125 (n2_dual),0.9005648876726139,kWh/kg,tables/T6_nominal_cvar_worst_designs.csv,"cycle=n2_dual, design=cvar_125",CVaR_0p9_kWh_per_kg
+Feasible fraction cvar_125 (n2_dual),1.0,-,tables/T6_nominal_cvar_worst_designs.csv,"cycle=n2_dual, design=cvar_125",feasible_fraction
+CVaR0.9 worst_iso (n2_dual),2.0,kWh/kg,tables/T6_nominal_cvar_worst_designs.csv,"cycle=n2_dual, design=worst_iso",CVaR_0p9_kWh_per_kg
+Feasible fraction worst_iso (n2_dual),0.74,-,tables/T6_nominal_cvar_worst_designs.csv,"cycle=n2_dual, design=worst_iso",feasible_fraction
+"Surrogate FFR overall, gradient boosting (smr)",6.3162076271186445,%,tables/T7_surrogate_performance.csv,"cycle=smr, model=gradient_boosting, output=feasibility",FFR_pct
+"Surrogate FFR near MITA limit, gradient boosting (smr)",10.76178960096735,%,tables/T7_surrogate_performance.csv,"cycle=smr, model=gradient_boosting, output=feasibility",FFR_near_pct
+"Surrogate FFR overall, gradient boosting (n2_single)",15.163674762407602,%,tables/T7_surrogate_performance.csv,"cycle=n2_single, model=gradient_boosting, output=feasibility",FFR_pct
+"Surrogate FFR near MITA limit, gradient boosting (n2_single)",58.46645367412141,%,tables/T7_surrogate_performance.csv,"cycle=n2_single, model=gradient_boosting, output=feasibility",FFR_near_pct
+"Surrogate FFR overall, gradient boosting (n2_dual)",17.0394469296462,%,tables/T7_surrogate_performance.csv,"cycle=n2_dual, model=gradient_boosting, output=feasibility",FFR_pct
+"Surrogate FFR near MITA limit, gradient boosting (n2_dual)",60.56338028169014,%,tables/T7_surrogate_performance.csv,"cycle=n2_dual, model=gradient_boosting, output=feasibility",FFR_near_pct
+"Surrogate SEC MAE, gradient boosting (smr)",0.02906759756955035,kWh/kg,tables/T7_surrogate_performance.csv,"cycle=smr, model=gradient_boosting, output=SEC",MAE
+"Surrogate SEC MAE, gradient boosting (n2_single)",0.05918656594775781,kWh/kg,tables/T7_surrogate_performance.csv,"cycle=n2_single, model=gradient_boosting, output=SEC",MAE
+"Surrogate SEC MAE, gradient boosting (n2_dual)",0.05173893040104363,kWh/kg,tables/T7_surrogate_performance.csv,"cycle=n2_dual, model=gradient_boosting, output=SEC",MAE
+Cells with a ranking reversal,0.0,cells,tables/TS_ranking_reversal_cells.csv,all rows,reversal
+Cells total,16.0,cells,tables/TS_ranking_reversal_cells.csv,all rows,cell
